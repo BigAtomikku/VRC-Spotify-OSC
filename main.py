@@ -99,3 +99,4 @@ while True:
         no_lyrics = True
     except AttributeError:
         continue
+
