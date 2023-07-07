@@ -1,4 +1,4 @@
-# VRC_Spotify_OSC
+# VRC Spotify OSC
 
 Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
