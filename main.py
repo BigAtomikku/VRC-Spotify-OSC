@@ -61,8 +61,8 @@ class CurrentSong:
 song = ''
 lyrics = []
 last_line_index = -1
-no_lyrics = 0
-spaces = ' ' * 25
+no_lyrics = False
+spaces = ' ' * 50
 
 while True:
     current_song_data = sp.get_current_song()
@@ -72,25 +72,29 @@ while True:
 
         if current_song.playing:
             if current_song.name + current_song.artist != song:
+                no_lyrics = False
                 print(Fore.MAGENTA + "\rNow playing: " + current_song.name + " by " + current_song.artist + spaces)
                 client.send_message("/chatbox/input", ["Now playing: " + current_song.name + " by " + current_song.artist, True, False])  # Send message
                 song = current_song.name + current_song.artist
                 lyrics = sp.get_lyrics(current_song.uri)['lyrics']['lines']
                 last_line_index = -1  # Reset the last printed line index
 
-            progress_ms = current_song.progress
-            start_time = time.time()
-            while time.time() - start_time <= 5:  # Adjust the timer duration as needed
-                for i, line in enumerate(lyrics):
-                    difference = (time.time() - start_time) * 1000
-                    if int(progress_ms + difference - 50 <= int(line['startTimeMs']) <= int(progress_ms + difference + 50)):
-                        if i != last_line_index:  # Check if it's a new line
-                            print(Fore.RESET + "\rLyrics: " + line['words'] + spaces, end='')
-                            client.send_message("/chatbox/input", [line['words'], True, False])  # Send message
-                            last_line_index = i
+            if not no_lyrics:
+                progress_ms = current_song.progress
+                start_time = time.time()
+                while time.time() - start_time <= 5:  # Adjust the timer duration as needed
+                    for i, line in enumerate(lyrics):
+                        difference = (time.time() - start_time) * 1000
+                        if int(progress_ms + difference - 50 <= int(line['startTimeMs']) <= int(progress_ms + difference + 50)):
+                            if i != last_line_index:  # Check if it's a new line
+                                print(Fore.RESET + "\rLyrics: " + line['words'] + spaces, end='')
+                                client.send_message("/chatbox/input", [line['words'], True, False])  # Send message
+                                last_line_index = i
         else:
             time.sleep(2)
 
     except TypeError:
-        print("Unable to fetch lyrics")
+        print(Fore.RED + "Unable to fetch lyrics")
+        no_lyrics = True
+
 
