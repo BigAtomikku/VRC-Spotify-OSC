@@ -96,5 +96,3 @@ while True:
     except TypeError:
         print(Fore.RED + "Unable to fetch lyrics")
         no_lyrics = True
-
-
