@@ -10,5 +10,5 @@ Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 2. Open inspect element
 3. Find cookies via Storage/Application tab
 4. Copy sp_dc value
-5. Run program found in zip and paste valu
+5. Run program found in zip and paste value
 
