@@ -34,7 +34,7 @@ if not disable_quick_edit_mode():
 
 while True:
     try:
-        sp = Spotify(input(Fore.BLUE + "Enter website sp_dc cookie value: "))
+        sp = Spotify(input(Fore.RESET + "Enter website sp_dc cookie value: "))
         break
     except syrics.exceptions.NotValidSp_Dc:
         print(Fore.RED + "sp_dc provided is invalid, please check it again!")
@@ -73,7 +73,8 @@ while True:
         if current_song.playing:
             if current_song.name + current_song.artist != song:
                 no_lyrics = False
-                print(Fore.MAGENTA + "\rNow playing: " + current_song.name + " by " + current_song.artist + spaces)
+                print('\r' + spaces)
+                print(Fore.MAGENTA + "Now playing: " + current_song.name + " by " + current_song.artist + spaces)
                 client.send_message("/chatbox/input", ["Now playing: " + current_song.name + " by " + current_song.artist, True, False])  # Send message
                 song = current_song.name + current_song.artist
                 lyrics = sp.get_lyrics(current_song.uri)['lyrics']['lines']
@@ -85,7 +86,7 @@ while True:
                 while time.time() - start_time <= 5:  # Adjust the timer duration as needed
                     for i, line in enumerate(lyrics):
                         difference = (time.time() - start_time) * 1000
-                        if int(progress_ms + difference - 50 <= int(line['startTimeMs']) <= int(progress_ms + difference + 50)):
+                        if int(progress_ms + difference - 30 <= int(line['startTimeMs']) <= int(progress_ms + difference + 30)):
                             if i != last_line_index:  # Check if it's a new line
                                 print(Fore.RESET + "\rLyrics: " + line['words'] + spaces, end='')
                                 client.send_message("/chatbox/input", [line['words'], True, False])  # Send message
@@ -94,5 +95,7 @@ while True:
             time.sleep(2)
 
     except TypeError:
-        print(Fore.RED + "Unable to fetch lyrics")
+        print(Fore.YELLOW + "Unable to fetch lyrics")
         no_lyrics = True
+    except AttributeError:
+        continue
