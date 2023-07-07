@@ -6,7 +6,7 @@ from syrics.api import Spotify
 from pythonosc.udp_client import SimpleUDPClient
 
 
-def disable_quick_edit_mode():
+def disable_quick_edit_mode(): # Chat GPT Moment
     # Get the console's standard input handle
     stdin_handle = ctypes.windll.kernel32.GetStdHandle(-10)
     if stdin_handle is None or stdin_handle == ctypes.c_void_p(-1).value:
