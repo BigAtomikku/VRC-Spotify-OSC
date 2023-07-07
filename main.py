@@ -62,7 +62,7 @@ song = ''
 lyrics = []
 last_line_index = -1
 no_lyrics = 0
-spaces = ' ' * 100
+spaces = ' ' * 25
 
 while True:
     current_song_data = sp.get_current_song()
