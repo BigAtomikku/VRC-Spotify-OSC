@@ -9,7 +9,6 @@ Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 1. Go to [spotify](https://open.spotify.com) website
 2. Open inspect element
 3. Find cookies section via Application tab on Google Chrome / Storage tab on firefox
-4. Scroll down and [find sp_dc](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value
-5. **Extract** zip and run program
-6. Paste value
+4. Scroll down to [find sp_dc](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
+5. Run program and paste value
 
