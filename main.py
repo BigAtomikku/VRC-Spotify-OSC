@@ -1,4 +1,5 @@
 import time
+import timeit
 import ctypes
 import syrics.exceptions
 from colorama import Fore
@@ -54,10 +55,10 @@ class CurrentSong:
 
 
 song = ''
-lyrics = []
+lyrics = {}
 no_lyrics = False
 spaces = ' ' * 50
-last_line_index = -1  # Reset the last printed line index
+last_line_index = ''
 
 while True:
     current_song_data = sp.get_current_song()
@@ -66,33 +67,34 @@ while True:
     try:
 
         if current_song.name + current_song.artist != song:
-            no_lyrics = False
             print('\r' + spaces)
             print(Fore.MAGENTA + "Now playing: " + current_song.name + " by " + current_song.artist + spaces)
             client.send_message("/chatbox/input", ["Now playing: " + current_song.name + " by " +
                                                    current_song.artist, True, False])  # Send message
             song = current_song.name + current_song.artist
             time.sleep(3)
-            lyrics = sp.get_lyrics(current_song.uri)
+            lyrics_data = sp.get_lyrics(current_song.uri)
 
-            if lyrics:
-                lyrics = lyrics['lyrics']['lines']
-                last_line_index = -1
+            if lyrics_data:
+                lyrics = {}
+                no_lyrics = False
+                last_line_index = ''
+                lyrics_data = lyrics_data['lyrics']['lines']
+                for line in lyrics_data:
+                    lyrics[int(line['startTimeMs'])]= line['words']
             else:
                 no_lyrics = True
-                song = current_song.name + current_song.artist
                 print(Fore.YELLOW + "Lyrics for this track are not available on spotify")
 
         if current_song.playing:
             if not no_lyrics:
                 progress_ms = current_song.progress
-                for i, line in enumerate(lyrics):
-                    if int(progress_ms - 150 <= int(line['startTimeMs']) <= int(progress_ms + 150)):
-                        if i != last_line_index:
-                            time.sleep(0.45)
-                            print(Fore.RESET + "\rLyrics: " + line['words'] + spaces, end='')
-                            client.send_message("/chatbox/input", [line['words'], True, False])  # Send message
-                            last_line_index = i
+                for progress, line in lyrics.items():
+                    if progress_ms - 140 <= progress <= progress_ms + 140 and line != last_line_index:
+                        time.sleep(0.5)
+                        print(Fore.RESET + "\rLyrics: " + line + spaces, end='')
+                        client.send_message("/chatbox/input", [line, True, False])
+                        last_line_index = line
 
             else:
                 time.sleep(5)
