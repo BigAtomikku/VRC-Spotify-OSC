@@ -1,11 +1,10 @@
 import sys
 import time
+import json
 import ctypes
-
-import requests.exceptions
 import syrics.exceptions
 from colorama import Fore
-from decouple import config
+import requests.exceptions
 from syrics.api import Spotify
 from pythonosc.udp_client import SimpleUDPClient
 
@@ -33,10 +32,19 @@ def disable_quick_edit_mode():
 
 
 def get_spotify_instance():
-    sp_dc = config('SP_DC', default=None)
+    try:
+        with open('config.json', 'r') as file:
+            data = json.load(file)
+            sp_dc = data.get('sp_dc', None)
+    except FileNotFoundError:
+        print(Fore.RED + "Error: config.json file not found.")
+        time.sleep(5)
+        sys.exit()
 
     if not sp_dc:
-        raise ValueError("SP_DC value is not present in the .env file")
+        print(Fore.RED + "sp_dc key is not present or has no value in the config.json file.")
+        time.sleep(5)
+        sys.exit()
 
     try:
         return Spotify(sp_dc)
@@ -98,7 +106,7 @@ def main():
         try:
             current_song = current_data(sp)
         except syrics.exceptions.NoSongPlaying:
-            print("No song detected, trying again.")
+            print(Fore.YELLOW + "No song detected, trying again.")
             continue
 
         try:
@@ -127,6 +135,7 @@ def main():
                     if last_line_index != lyric:
                         print(Fore.RESET + "\rLyrics: " + lyric + spaces, end='')
                         client.send_message("/chatbox/input", [lyric, True, False])
+                        last_line_index = lyric
 
             else:
                 print(Fore.RESET + "\rPaused" + spaces, end='')
