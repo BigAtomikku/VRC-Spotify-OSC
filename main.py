@@ -28,7 +28,7 @@ def disable_quick_edit_mode():
     return True
 
 
-""" Returns spotify instance using sp_dc token given in the .env file """
+""" Returns spotify instance using sp_dc token given in the config.json file """
 
 
 def get_spotify_instance():
