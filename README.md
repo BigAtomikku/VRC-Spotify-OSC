@@ -8,4 +8,5 @@ Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
 1) Go to [spotify](https://open.spotify.com) website
 2) [Find sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
-3) Run program and paste value
+3) Place sp_dc value into .env file
+4) Run program!
