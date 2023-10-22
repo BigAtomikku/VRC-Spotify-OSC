@@ -1,12 +1,13 @@
+import sys
 import time
-import timeit
 import ctypes
 import syrics.exceptions
 from colorama import Fore
+from decouple import config
 from syrics.api import Spotify
 from pythonosc.udp_client import SimpleUDPClient
 
-
+""" Disables quick edit mode to avoid console pauses """
 def disable_quick_edit_mode():
     stdin_handle = ctypes.windll.kernel32.GetStdHandle(-10)
     if stdin_handle is None or stdin_handle == ctypes.c_void_p(-1).value:
@@ -23,25 +24,20 @@ def disable_quick_edit_mode():
 
     return True
 
+""" Returns spotify instance using sp_dc token given in the .env file """
+def get_spotify_instance():
+    sp_dc = config('SP_DC', default=None)
 
-if not disable_quick_edit_mode():
-    print(Fore.RED + "Failed to disable Quick Edit mode")
+    if not sp_dc:
+        raise ValueError("SP_DC value is not present in the .env file")
 
-
-while True:
     try:
-        sp = Spotify(input(Fore.RESET + "Enter website sp_dc cookie value: "))
-        break
+        return Spotify(sp_dc)
     except syrics.exceptions.NotValidSp_Dc:
-        print(Fore.RED + "sp_dc provided is invalid, please check it again!")
+        print(Fore.RED + "sp_dc provided is invalid, please check it and update the .env file")
+        sys.exit()
 
-
-ip = "127.0.0.1"
-port = 9000
-client = SimpleUDPClient(ip, port)  # Create client
-print(Fore.RESET + "Connected to Client")
-
-
+""" Instance data for current song (this doesn't need to be a class) """
 class CurrentSong:
     def __init__(self, data):
         try:
@@ -53,54 +49,70 @@ class CurrentSong:
         self.progress = data['progress_ms']
         self.playing = data['is_playing']
 
+""" Main method """
+def main():
+    if not disable_quick_edit_mode():
+        print(Fore.RED + "Failed to disable Quick Edit mode")
 
-song = ''
-lyrics = {}
-no_lyrics = False
-spaces = ' ' * 50
-last_line_index = ''
+    sp = get_spotify_instance()
 
-while True:
-    current_song_data = sp.get_current_song()
-    current_song = CurrentSong(current_song_data)
+    ip, port = "127.0.0.1", 9000
+    client = SimpleUDPClient(ip, port)  # Create client
+    print(Fore.RESET + "Connected to Client")
 
-    try:
+    song = ''
+    lyrics = {}
+    no_lyrics = False
+    spaces = ' ' * 50
+    last_line_index = ''
 
-        if current_song.name + current_song.artist != song:
-            print('\r' + spaces)
-            print(Fore.MAGENTA + "Now playing: " + current_song.name + " by " + current_song.artist + spaces)
-            client.send_message("/chatbox/input", ["Now playing: " + current_song.name + " by " +
-                                                   current_song.artist, True, False])  # Send message
-            song = current_song.name + current_song.artist
-            time.sleep(3)
-            lyrics_data = sp.get_lyrics(current_song.uri)
+    while True:
+        try:
+            current_song_data = sp.get_current_song()
+            current_song = CurrentSong(current_song_data)
+        except syrics.exceptions.NoSongPlaying:
+            print("No song detected, trying again.")
+            continue
 
-            if lyrics_data:
-                lyrics = {}
-                no_lyrics = False
-                last_line_index = ''
-                lyrics_data = lyrics_data['lyrics']['lines']
-                for line in lyrics_data:
-                    lyrics[int(line['startTimeMs'])]= line['words']
+        try:
+            if current_song.name + current_song.artist != song:
+                print('\r' + spaces)
+                print(Fore.MAGENTA + "Now playing: " + current_song.name + " by " + current_song.artist + spaces)
+                client.send_message("/chatbox/input", ["Now playing: " + current_song.name + " by " +
+                                                       current_song.artist, True, False])  # Send message
+                song = current_song.name + current_song.artist
+                time.sleep(3)
+                lyrics_data = sp.get_lyrics(current_song.uri)
+
+                if lyrics_data:
+                    lyrics = {}
+                    no_lyrics = False
+                    last_line_index = ''
+                    lyrics_data = lyrics_data['lyrics']['lines']
+                    for line in lyrics_data:
+                        lyrics[int(line['startTimeMs'])] = line['words']
+                else:
+                    no_lyrics = True
+                    print(Fore.YELLOW + "Lyrics for this track are not available on spotify")
+
+            if current_song.playing:
+                if not no_lyrics:
+                    progress_ms = current_song.progress
+                    for progress, line in lyrics.items():
+                        if progress_ms - 150 <= progress <= progress_ms + 150 and line != last_line_index:
+                            time.sleep(0.5)
+                            print(Fore.RESET + "\rLyrics: " + line + spaces, end='')
+                            client.send_message("/chatbox/input", [line, True, False])
+                            last_line_index = line
+
+                else:
+                    time.sleep(5)
             else:
-                no_lyrics = True
-                print(Fore.YELLOW + "Lyrics for this track are not available on spotify")
+                print(Fore.RESET + "\rPaused" + spaces, end='')
+                time.sleep(1)
 
-        if current_song.playing:
-            if not no_lyrics:
-                progress_ms = current_song.progress
-                for progress, line in lyrics.items():
-                    if progress_ms - 140 <= progress <= progress_ms + 140 and line != last_line_index:
-                        time.sleep(0.5)
-                        print(Fore.RESET + "\rLyrics: " + line + spaces, end='')
-                        client.send_message("/chatbox/input", [line, True, False])
-                        last_line_index = line
+        except AttributeError:
+            continue
 
-            else:
-                time.sleep(5)
-        else:
-            print(Fore.RESET + "\rPaused" + spaces, end='')
-            time.sleep(1)
 
-    except AttributeError:
-        continue
+main()
