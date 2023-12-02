@@ -93,7 +93,7 @@ def main():
     sp = get_spotify_instance()
     ip, port = "127.0.0.1", 9000
     client = SimpleUDPClient(ip, port)  # Create client
-    print(Fore.RESET + "Connected to Client\n\n",)
+    print(Fore.RESET + "Connected to Client\n",)
 
     song = ''
     lyrics = {}
@@ -109,7 +109,6 @@ def main():
 
         try:
             if current_song[1] + current_song[2] != song:
-                clear_console_line()
                 clear_console_line()
                 print(Fore.MAGENTA + "Now playing: " + current_song[1] + " by " + current_song[2])
                 client.send_message("/chatbox/input", ["Now playing: " + current_song[1] + " by " +
