@@ -8,9 +8,8 @@ import requests.exceptions
 from syrics.api import Spotify
 from pythonosc.udp_client import SimpleUDPClient
 
-""" Disables quick edit mode to avoid console pauses """
 
-
+# Disables quick edit mode to avoid console pauses """
 def disable_quick_edit_mode():
     stdin_handle = ctypes.windll.kernel32.GetStdHandle(-10)
     if stdin_handle is None or stdin_handle == ctypes.c_void_p(-1).value:
@@ -28,9 +27,7 @@ def disable_quick_edit_mode():
     return True
 
 
-""" Returns spotify instance using sp_dc token given in the config.json file """
-
-
+# Returns spotify instance using sp_dc token given in the config.json file
 def get_spotify_instance():
     try:
         with open('config.json', 'r') as file:
@@ -54,9 +51,7 @@ def get_spotify_instance():
         sys.exit()
 
 
-""" Returns array of data for current song """
-
-
+# Returns array of data for current song
 def current_data(sp):
     data = sp.get_current_song()
     try:
@@ -70,23 +65,27 @@ def current_data(sp):
     return [uri, name, artist, progress, playing]
 
 
-""" Returns dictionary of times associated with lyrics """
-
-
+# Returns dictionary of times associated with lyrics
 def lyrics_dictionary(data):
     lyrics_data = data['lyrics']['lines']
     lyrics_dic = {int(line['startTimeMs']): line['words'] for line in lyrics_data}
     return lyrics_dic
 
 
+# Gets current lyric in song
 def current_lyric(user_time, lyrics):
     key = max((k for k in lyrics.keys() if k < user_time), default=None)
     return lyrics.get(key)
 
 
-""" Main method """
+# Clears the current line in the console
+def clear_console_line():
+    UP = '\033[1A'
+    CLEAR = '\x1b[2K'
+    print(UP, end=CLEAR)
 
 
+# Main method
 def main():
     if not disable_quick_edit_mode():
         print(Fore.RED + "Failed to disable Quick Edit mode")
@@ -94,12 +93,11 @@ def main():
     sp = get_spotify_instance()
     ip, port = "127.0.0.1", 9000
     client = SimpleUDPClient(ip, port)  # Create client
-    print(Fore.RESET + "Connected to Client")
+    print(Fore.RESET + "Connected to Client\n\n",)
 
     song = ''
     lyrics = {}
     no_lyrics = False
-    spaces = ' ' * 50
     last_line_index = ''
 
     while True:
@@ -111,8 +109,9 @@ def main():
 
         try:
             if current_song[1] + current_song[2] != song:
-                print('\r' + spaces)
-                print(Fore.MAGENTA + "Now playing: " + current_song[1] + " by " + current_song[2] + spaces)
+                clear_console_line()
+                clear_console_line()
+                print(Fore.MAGENTA + "Now playing: " + current_song[1] + " by " + current_song[2])
                 client.send_message("/chatbox/input", ["Now playing: " + current_song[1] + " by " +
                                                        current_song[2], True, False])  # Send message
                 song = current_song[1] + current_song[2]
@@ -133,12 +132,15 @@ def main():
                     user_time = current_song[3]
                     lyric = current_lyric(user_time, lyrics)
                     if last_line_index != lyric:
-                        print(Fore.RESET + "\rLyrics: " + lyric + spaces, end='')
+                        if last_line_index != '':
+                            clear_console_line()
+                        print(Fore.RESET + "Lyrics: " + lyric)
                         client.send_message("/chatbox/input", [lyric, True, False])
                         last_line_index = lyric
 
             else:
-                print(Fore.RESET + "\rPaused" + spaces, end='')
+                clear_console_line()
+                print(Fore.RESET + "Paused")
                 time.sleep(1)
 
         except (requests.exceptions.ConnectionError, TypeError):
