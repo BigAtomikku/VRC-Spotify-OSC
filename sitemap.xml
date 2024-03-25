@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset
+      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+
+
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>1.00</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/issues</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/pulls</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/actions</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/security</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/blob/master/README.md</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/blob/master/config.json</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/blob/master/google31ec83313d018233.html</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/blob/master/main.py</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/releases</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/tag/v1.0.1</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.80</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/3322511281a79325173b7ec68e5c4a9f46e16549</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/1ea07b6ce885524fc2af1bdbfbc45cc1fd12b2d2</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/tag/v1.0.0</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.64</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels?sort=name-asc</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels?sort=name-desc</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels?sort=count-desc</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels?sort=count-asc</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/bug</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/documentation</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/duplicate</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/enhancement</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/good%20first%20issue</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/help%20wanted</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/invalid</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/question</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/labels/wontfix</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=due_date&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=due_date&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=completeness&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=completeness&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=title&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=title&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=count&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=count&amp;state=open</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/353b472730e4d8d99d7ba7650e459a39799a8a0b</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/a70d38fe4fb1f2e4542f4d07044b3bfc260e17af</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/28c0de96367be07886bf8889b9644f813d35521f</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/1fe073a897dba9a47c488e8fc4d77005dcde3aa5</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.51</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=due_date&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=due_date&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=completeness&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=completeness&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=title&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=title&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=desc&amp;sort=count&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/milestones?direction=asc&amp;sort=count&amp;state=closed</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/a75cbb61c4e9647bd1215108ae9d7aa6259e8060</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/85acf5911950c305678a8e96aa3b62fee93f4cc6</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/787b0ad746dac50ceae3465ea4aaa771fc36b636</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.41</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/f641f20d1c0a30b6e6d8595a477d79c3a267ca77</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/f985f1bf19abb37add078ab3b30d9da8645b6e1a</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/6dfabd4d5d8ee0c4f41315029048272d603ea3f0</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.33</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/4bb5e84af01eaed9e63b3f7ccd12aff9d3e6f80f</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.26</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/425c049c22f472ad8143fd50132effd8dbbc0289</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.26</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/d2db9bd406f5d8c8760c19d2d05180696af713fa</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.21</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/7a20c7d8e41b21b02ab65c4ce33ec329f896c5a6</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.21</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/ae520507e2af908bdf321b8cfeacb9fc569d8742</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.17</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/dae7e76594acadd3ce59c2bc019da87afcb63d23</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.13</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/ff60c548899c003f891a606021edf1378d7d5ad2</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.11</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/bcd17499ec7329c1c3cf95b91026a6886dfa44fd</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.09</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/515f95bdc3b4777a4a17f03fd39a7728c9112445</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.07</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/e21f11137d07c605ae3298c42f1efd4e5667d6a2</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.05</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/c69c13e9a4b7145792b3e549211d5eae1407b890</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.05</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/7c2e59b53f03154a7333f7b057d77702ee177db8</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.04</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/3a55d99ccf0fa5be12443813fab40d991c2dee34</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.04</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/5a49ebcb5c2c52f1d28145145bd911a808ce6b5e</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.03</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/5afeea18a72ef42b699edf4b6969595841743ca8</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.02</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/df502b7df31d84a032bfb5160f22f994e2889a37</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.02</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/0d1b67c1d960f69725d041bfc37b6a574443560b</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.02</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/cf0ae9d037c3f4cf67669f1bdfb80ce10d848ab9</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.01</priority>
+</url>
+<url>
+  <loc>https://github.com/BigAtomikku/VRC-Spotify-OSC/commit/0391e569d1892397420fd333cbffc314279fd33e</loc>
+  <lastmod>2024-03-25T03:09:35+00:00</lastmod>
+  <priority>0.01</priority>
+</url>
+
+
+</urlset>
