@@ -50,6 +50,21 @@ def get_spotify_instance():
         time.sleep(5)
         sys.exit()
 
+def load_config(filename, keys):
+    try:
+        with open(filename, 'r') as file:
+            data = json.load(file)
+            values = [data.get(key) for key in keys]
+            if None in values:
+                print(Fore.RED + "One or more keys are missing in the config file:", keys)
+                time.sleep(5)
+                sys.exit()
+            return values
+    except FileNotFoundError:
+        print(Fore.RED + f"Error: {filename} file not found.")
+        time.sleep(5)
+        sys.exit()
+
 
 # Returns array of data for current song
 def current_data(sp):
@@ -91,7 +106,17 @@ def main():
         print(Fore.RED + "Failed to disable Quick Edit mode")
 
     sp = get_spotify_instance()
-    ip, port = "127.0.0.1", 9000
+    #ip, port = "127.0.0.1", 9000
+
+    try:
+        #sp_dc = load_config('config.json', ['sp_dc'])[0]
+        ip, port = load_config('config.json', ['ip', 'port'])
+    except FileNotFoundError:
+        print(Fore.RED + "Error: config.json file not found.")
+        time.sleep(5)
+        sys.exit()
+
+    #sp = Spotify(sp_dc)
     client = SimpleUDPClient(ip, port)  # Create client
     print(Fore.RESET + "Connected to Client\n",)
 
@@ -104,6 +129,7 @@ def main():
         try:
             current_song = current_data(sp)
         except syrics.exceptions.NoSongPlaying:
+            time.sleep(1)
             print(Fore.YELLOW + "No song detected, trying again.")
             continue
 
@@ -113,6 +139,7 @@ def main():
                 print(Fore.MAGENTA + "Now playing: " + current_song[1] + " by " + current_song[2])
                 client.send_message("/chatbox/input", ["Now playing: " + current_song[1] + " by " +
                                                        current_song[2], True, False])  # Send message
+                client.send_message("/Atomikku/VRCSpotifyOSC/Lyrics", "") #send blank on new song, just incase new song doesn't have lyrics (so previous lyrics don't stay frozen)
                 song = current_song[1] + current_song[2]
                 time.sleep(3)
                 lyrics_data = sp.get_lyrics(current_song[0])
@@ -135,6 +162,7 @@ def main():
                             clear_console_line()
                         print(Fore.RESET + "Lyrics: " + lyric)
                         client.send_message("/chatbox/input", [lyric, True, False])
+                        client.send_message("/Atomikku/VRCSpotifyOSC/Lyrics", lyric)
                         last_line_index = lyric
 
             else:
