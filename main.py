@@ -9,7 +9,7 @@ from syrics.api import Spotify
 from pythonosc.udp_client import SimpleUDPClient
 
 
-# Disables quick edit mode to avoid console pauses """
+# Disables quick edit mode to avoid console pauses
 def disable_quick_edit_mode():
     stdin_handle = ctypes.windll.kernel32.GetStdHandle(-10)
     if stdin_handle is None or stdin_handle == ctypes.c_void_p(-1).value:
@@ -26,30 +26,7 @@ def disable_quick_edit_mode():
 
     return True
 
-
-# Returns spotify instance using sp_dc token given in the config.json file
-def get_spotify_instance():
-    try:
-        with open('config.json', 'r') as file:
-            data = json.load(file)
-            sp_dc = data.get('sp_dc', None)
-    except FileNotFoundError:
-        print(Fore.RED + "Error: config.json file not found.")
-        time.sleep(5)
-        sys.exit()
-
-    if not sp_dc:
-        print(Fore.RED + "sp_dc key is not present or has no value in the config.json file.")
-        time.sleep(5)
-        sys.exit()
-
-    try:
-        return Spotify(sp_dc)
-    except syrics.exceptions.NotValidSp_Dc:
-        print(Fore.RED + "sp_dc provided is invalid, please check it and update the .env file")
-        time.sleep(5)
-        sys.exit()
-
+# Loads config from Json
 def load_config(filename, keys):
     try:
         with open(filename, 'r') as file:
@@ -61,7 +38,32 @@ def load_config(filename, keys):
                 sys.exit()
             return values
     except FileNotFoundError:
-        print(Fore.RED + f"Error: {filename} file not found.")
+        print(Fore.YELLOW + "Config file missing or incomplete. Creating new config.")
+        sp_dc = input(Fore.RESET + "Enter sp_dc token: ")
+        ip = input("Enter server IP address (e.g., 127.0.0.1): ")
+        port = input("Enter server port (e.g., 9000): ")
+        data = {"sp_dc": sp_dc, "ip": ip, "port": int(port)}
+        with open("config.json", 'w') as json_file:
+            json.dump(data, json_file)
+        values = [data.get(key) for key in keys]
+        if None in values:
+            print(Fore.RED + "One or more keys are missing in the config file:", keys)
+            time.sleep(5)
+            sys.exit()
+        return values
+
+
+# Returns spotify instance using sp_dc token given in the config.json file
+def get_spotify_instance(sp_dc):
+    if not sp_dc:
+        print(Fore.RED + "sp_dc key is not present or has no value in the config.json file.")
+        time.sleep(5)
+        sys.exit()
+
+    try:
+        return Spotify(sp_dc)
+    except syrics.exceptions.NotValidSp_Dc:
+        print(Fore.RED + "sp_dc provided is invalid, please check it and update the config.json file.")
         time.sleep(5)
         sys.exit()
 
@@ -105,18 +107,14 @@ def main():
     if not disable_quick_edit_mode():
         print(Fore.RED + "Failed to disable Quick Edit mode")
 
-    sp = get_spotify_instance()
-    #ip, port = "127.0.0.1", 9000
-
     try:
-        #sp_dc = load_config('config.json', ['sp_dc'])[0]
-        ip, port = load_config('config.json', ['ip', 'port'])
+        sp_dc, ip, port = load_config('config.json', ['sp_dc', 'ip', 'port'])
     except FileNotFoundError:
         print(Fore.RED + "Error: config.json file not found.")
         time.sleep(5)
         sys.exit()
 
-    #sp = Spotify(sp_dc)
+    sp = get_spotify_instance(sp_dc)
     client = SimpleUDPClient(ip, port)  # Create client
     print(Fore.RESET + "Connected to Client\n",)
 
@@ -172,6 +170,5 @@ def main():
 
         except (requests.exceptions.ConnectionError, TypeError):
             continue
-
 
 main()
