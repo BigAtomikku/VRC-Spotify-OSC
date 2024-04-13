@@ -28,7 +28,7 @@ def disable_quick_edit_mode():
 
 
 # Returns spotify instance using sp_dc token given in the config.json file
-"""def get_spotify_instance():
+def get_spotify_instance():
     try:
         with open('config.json', 'r') as file:
             data = json.load(file)
@@ -48,7 +48,7 @@ def disable_quick_edit_mode():
     except syrics.exceptions.NotValidSp_Dc:
         print(Fore.RED + "sp_dc provided is invalid, please check it and update the .env file")
         time.sleep(5)
-        sys.exit() """
+        sys.exit()
 
 def load_config(filename, keys):
     try:
@@ -105,15 +105,18 @@ def main():
     if not disable_quick_edit_mode():
         print(Fore.RED + "Failed to disable Quick Edit mode")
 
-    #sp = get_spotify_instance()
+    sp = get_spotify_instance()
     #ip, port = "127.0.0.1", 9000
 
-    sp_dc = load_config('config.json', ['sp_dc'])[0]
-    print(sp_dc)
-    sp = Spotify(sp_dc)
-    ip, port = load_config('config.json', ['ip', 'port'])
+    try:
+        #sp_dc = load_config('config.json', ['sp_dc'])[0]
+        ip, port = load_config('config.json', ['ip', 'port'])
+    except FileNotFoundError:
+        print(Fore.RED + "Error: config.json file not found.")
+        time.sleep(5)
+        sys.exit()
 
-
+    #sp = Spotify(sp_dc)
     client = SimpleUDPClient(ip, port)  # Create client
     print(Fore.RESET + "Connected to Client\n",)
 
@@ -126,6 +129,7 @@ def main():
         try:
             current_song = current_data(sp)
         except syrics.exceptions.NoSongPlaying:
+            time.sleep(1)
             print(Fore.YELLOW + "No song detected, trying again.")
             continue
 
