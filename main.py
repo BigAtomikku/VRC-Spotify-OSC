@@ -37,19 +37,23 @@ def load_config(filename, keys):
                 time.sleep(5)
                 sys.exit()
             return values
+
     except FileNotFoundError:
-        print(Fore.YELLOW + "Config file missing or incomplete. Creating new config.")
+        print(Fore.YELLOW + "Config file missing or incomplete. Creating new config")
         sp_dc = input(Fore.RESET + "Enter sp_dc token: ")
         ip = input("Enter server IP address (e.g., 127.0.0.1): ")
         port = input("Enter server port (e.g., 9000): ")
         data = {"sp_dc": sp_dc, "ip": ip, "port": int(port)}
+
         with open("config.json", 'w') as json_file:
             json.dump(data, json_file)
         values = [data.get(key) for key in keys]
+
         if None in values:
             print(Fore.RED + "One or more keys are missing in the config file:", keys)
             time.sleep(5)
             sys.exit()
+
         return values
 
 
