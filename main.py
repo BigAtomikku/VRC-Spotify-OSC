@@ -119,6 +119,7 @@ def main():
     print(Fore.RESET + "Connected to Client\n",)
 
     song = ''
+    paused = False
     lyrics = {}
     no_lyrics = False
     last_line_index = ''
@@ -128,15 +129,17 @@ def main():
             current_song = current_data(sp)
         except syrics.exceptions.NoSongPlaying:
             time.sleep(1)
-            print(Fore.YELLOW + "No song detected, trying again.")
+            input(Fore.YELLOW + "No song detected, press enter to try again")
+            sp = get_spotify_instance(sp_dc)
+            client = SimpleUDPClient(ip, port)  # Create client
+            print(Fore.RESET + "Connected to Client\n", )
             continue
 
         try:
             if current_song[1] + current_song[2] != song:
                 clear_console_line()
                 print(Fore.MAGENTA + "Now playing: " + current_song[1] + " by " + current_song[2])
-                client.send_message("/chatbox/input", ["Now playing: " + current_song[1] + " by " +
-                                                       current_song[2], True, False])  # Send message
+                client.send_message("/chatbox/input", ["Now playing: " + current_song[1] + " by " + current_song[2], True, False])  # Send message
                 client.send_message("/Atomikku/VRCSpotifyOSC/Lyrics", "") #send blank on new song, just incase new song doesn't have lyrics (so previous lyrics don't stay frozen)
                 song = current_song[1] + current_song[2]
                 time.sleep(3)
@@ -152,6 +155,7 @@ def main():
                     print(Fore.YELLOW + "Lyrics for this track are not available on spotify")
 
             if current_song[4]:
+                paused = False
                 if not no_lyrics:
                     user_time = current_song[3]
                     lyric = current_lyric(user_time, lyrics)
@@ -164,9 +168,11 @@ def main():
                         last_line_index = lyric
 
             else:
-                clear_console_line()
-                print(Fore.RESET + "Paused")
-                time.sleep(1)
+                if not paused:
+                    paused = True
+                    clear_console_line()
+                    print(Fore.RESET + "Paused")
+                    time.sleep(1)
 
         except (requests.exceptions.ConnectionError, TypeError):
             continue
