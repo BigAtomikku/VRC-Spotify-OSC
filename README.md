@@ -2,11 +2,11 @@
 
 Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
-![image](https://github.com/Mikkukun/VRC_Spotify_OSC/assets/51969732/cfc19b67-047f-4826-9d17-74c13face57a)
+![251337208-cfc19b67-047f-4826-9d17-74c13face57a](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/4a7fa698-e60c-433d-96b4-af2d10551fdb)
 
 Additionally, connect to 3rd parties to add more functionality!
 
-![image](https://media.discordapp.net/attachments/1228068709671764179/1228762059672649828/Screenshot_2024-04-13_114744.png?ex=662d38d8&is=661ac3d8&hm=cd233e85343909d7469441bacb531033b27e2e766d74538892e44cdb0e3df297&=&format=webp&quality=lossless&width=860&height=678)
+![Screenshot_2024-04-13_114744](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/1cbd8c0f-fb3a-4698-aa34-6f6cd32d96e7)
 
 ## Installation
 
