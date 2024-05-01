@@ -1,5 +1,4 @@
 from pythonosc.udp_client import SimpleUDPClient
-from gui import start_gui, update_lyric, update_song
 # from listener import start_server
 from syrics.api import Spotify
 import requests.exceptions
@@ -9,6 +8,22 @@ import threading
 import json
 import time
 import sys
+import gui
+
+running = False
+
+def is_running():
+    global running
+    return running
+
+def start_main():
+    global running
+    if not running:
+        threading.Thread(target=main).start()
+
+def stop_main():
+    global running
+    running = False
 
 def load_config(filename, keys):
     try:
@@ -24,37 +39,23 @@ def load_config(filename, keys):
             return values
 
     except FileNotFoundError:
-        print(Fore.YELLOW + "Config file missing. Creating new config")
-        sp_dc = input(Fore.RESET + "Enter sp_dc token: ")
-        ip = input("Enter server IP address (e.g., 127.0.0.1): ")
-        port = input("Enter server port (e.g., 9000): ")
-        data = {"sp_dc": sp_dc, "ip": ip, "port": int(port)}
-
-        with open("config.json", 'w') as json_file:
-            json.dump(data, json_file)
-        values = [data.get(key) for key in keys]
-
-        if None in values:
-            print(Fore.RED + "One or more keys are missing in the config file:", keys)
-            time.sleep(5)
-            sys.exit()
-
-        return values
-
+        print(Fore.YELLOW + "Config file missing")
+        gui.update_lyric("Config file missing, open settings to create one")
+        gui.force_stop_program()
 
 # Returns spotify instance using sp_dc token given in the config.json file
 def get_spotify_instance(sp_dc):
     if not sp_dc:
         print(Fore.RED + "sp_dc key is not present or has no value in the config.json file.")
-        time.sleep(5)
-        sys.exit()
+        gui.update_lyric("sp_dc key invalid, please check it and update settings")
+        gui.force_stop_program()
 
     try:
         return Spotify(sp_dc)
     except syrics.exceptions.NotValidSp_Dc:
-        print(Fore.RED + "sp_dc provided is invalid, please check it and update the config.json file.")
-        time.sleep(5)
-        sys.exit()
+        print(Fore.RED + "sp_dc key is invalid, please check it and update the config.json file.")
+        gui.update_lyric("sp_dc key invalid, please check it and update settings")
+        gui.force_stop_program()
 
 
 # Returns array of data for current song
@@ -90,10 +91,19 @@ def current_lyric(user_time, lyrics):
 
 # Main method
 def main():
-    sp_dc, ip, port = load_config('config.json', ['sp_dc', 'ip', 'port'])
-    sp = get_spotify_instance(sp_dc)
-    client = SimpleUDPClient(ip, port)
-    print(Fore.LIGHTGREEN_EX + "Connected to Client\n")
+    global running
+    running = True
+
+    try:
+        sp_dc, ip, port = load_config('config.json', ['sp_dc', 'ip', 'port'])
+        sp = get_spotify_instance(sp_dc)
+        client = SimpleUDPClient(ip, port)
+        print(Fore.LIGHTGREEN_EX + "Connected to Client\n")
+
+    except TypeError:
+        gui.update_lyric("config file missing, open settings to create one")
+        gui.start_stop_button.config(text="Start")
+        gui.force_stop_program()
 
     song = ''
     lyrics = {}
@@ -101,14 +111,13 @@ def main():
     no_lyrics = False
     last_line_index = ''
     # threading.Thread(target=start_server, daemon = True).start() # Activate listener (NOT DONE IMPLEMENTING)
-    threading.Thread(target=start_gui, daemon = True).start()
 
-    while True:
+    while running:
         try:
             current_song = current_data(sp)
         except syrics.exceptions.NoSongPlaying:
             time.sleep(1)
-            input(Fore.YELLOW + "No song detected, press enter to try again")
+            print("Access token expired, reconnecting")
             sp = get_spotify_instance(sp_dc)
             print(Fore.RESET + "Connected to Client\n")
             continue
@@ -119,8 +128,8 @@ def main():
                     paused = False
 
                 print(Fore.MAGENTA + "Now playing: " + current_song['name'] + " by " + current_song['artist'])
-                update_song(current_song['name'], current_song['artist'])
-                update_lyric("")
+                gui.update_song(current_song['name'], current_song['artist'])
+                gui.update_lyric("")
                 client.send_message("/chatbox/input", [f"\U000025B6 {current_song['name']} - {current_song['artist']}", True, False])
                 client.send_message("/Atomikku/VRCSpotifyOSC/Lyrics", "") # send blank on new song, just incase new song doesn't have lyrics (so previous lyrics don't stay frozen)
                 song = current_song['name'] + current_song['artist']
@@ -134,6 +143,7 @@ def main():
                 else:
                     no_lyrics = True
                     print(Fore.YELLOW + "Lyrics for this track are not available on spotify")
+                    gui.update_lyric("Lyrics for this track are not available on spotify")
 
             if current_song['is_playing']:
                 if not no_lyrics:
@@ -142,7 +152,7 @@ def main():
                     if last_line_index != lyric:
                         paused = False
                         print(Fore.RESET + "Lyrics: " + lyric)
-                        update_lyric(lyric)
+                        gui.update_lyric(lyric)
                         client.send_message("/chatbox/input", [f"\U000025B6 {current_song['name']} - {current_song['artist']} \n {lyric}", True, False])
                         client.send_message("/Atomikku/VRCSpotifyOSC/Lyrics", lyric)
                         last_line_index = lyric
@@ -150,7 +160,7 @@ def main():
             else:
                 if not paused:
                     paused = True
-                    update_lyric("Paused")
+                    gui.update_lyric("Paused")
                     client.send_message("/chatbox/input", [f"\U000023F8 {current_song['name']} - {current_song['artist']}", True, False])
                     if not no_lyrics:
                         print(Fore.RESET + "Paused")
@@ -158,5 +168,3 @@ def main():
 
         except (requests.exceptions.ConnectionError, TypeError):
             continue
-
-main()
