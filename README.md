@@ -2,7 +2,7 @@
 
 Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
-![VRChat_2024-06-12_19-58-58 653_3840x2160](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/99405867-1801-433a-9bfe-044c82d868fd)
+![VRChat_2024-06-12_19-58-58 653_3840x2160_30](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/d1a2b873-9154-4a92-8755-1746c58a23c6)
 
 Additionally, connect to 3rd parties to add more functionality!
 
