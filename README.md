@@ -2,7 +2,7 @@
 
 Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
-![251337208-cfc19b67-047f-4826-9d17-74c13face57a](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/4a7fa698-e60c-433d-96b4-af2d10551fdb)
+![VRChat_2024-06-12_19-58-58 653_3840x2160_30](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/d1a2b873-9154-4a92-8755-1746c58a23c6)
 
 Additionally, connect to 3rd parties to add more functionality!
 
@@ -10,8 +10,13 @@ Additionally, connect to 3rd parties to add more functionality!
 
 ## Installation
 
-1) Grab [latest release](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases)
-2) Go to [spotify](https://open.spotify.com) website
-3) [Find sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
-4) Run program
-5) Follow prompted instructions
+1) Go to [spotify](https://open.spotify.com) website
+2) [Find sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
+3) Run program
+4) Open settings
+5) Paste SP_DC key
+
+## Known Issues
+
+1) Right now if a song does not contain lyrics, only one message will pop up showing the song name and author and fade away. I will look for the best way to repeat the message so it does not disappear in my current implementations.
+2) If the songs lyrics are too fast it may time out the chatbox. You can see if you are timed out by opening the quick menu
