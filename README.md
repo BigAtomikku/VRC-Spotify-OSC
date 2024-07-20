@@ -18,5 +18,4 @@ Additionally, connect to 3rd parties to add more functionality!
 
 ## Known Issues
 
-1) Right now if a song does not contain lyrics, only one message will pop up showing the song name and author and fade away. I will look for the best way to repeat the message so it does not disappear in my current implementations.
-2) If the songs lyrics are too fast it may time out the chatbox. You can see if you are timed out by opening the quick menu
+1) If the songs lyrics are too fast it may time out the chatbox. You can see if you are timed out by opening the quick menu
