@@ -18,4 +18,4 @@ Additionally, connect to 3rd parties to add more functionality!
 
 ## Known Issues
 
-1) If the songs lyrics are too fast it may time out the chatbox. You can see if you are timed out by opening the quick menu
+1) If the songs lyrics are too fast it may time-out the chatbox. You can see if you are timed out by opening the launch pad
