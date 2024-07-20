@@ -9,24 +9,24 @@ def start_gui():
     global start_stop_button
     window = Tk()
     window.title("VRC Spotify OSC v2.0.0")
-    window.geometry("450x135")
+    window.geometry("450x160")
     window.configure(bg="#222")
     window.resizable(False, False)
 
     global song_sync
-    song_sync = Label(window, text="Program Stopped", font=("Helvetica", 15), bg="#222", fg="white")
+    song_sync = Label(window, text="Program Stopped", font=("Segoe UI SemiBold", 15), bg="#222", fg="white")
     song_sync.pack(padx=10, pady=10)
 
     global lyrics
-    lyrics = Label(window, text="", font=("Helvetica", 13), bg="#222", fg="white")
+    lyrics = Label(window, text="", font=("Segoe UI", 11), bg="#222", fg="white")
     lyrics.pack(padx=10, pady=10)
 
-    settings_button = Button(window, text="Settings", command=open_settings, bg="#333", fg="white")
+    settings_button = Button(window, text="Settings", font=("Segoe UI SemiBold", 9), command=open_settings, bg="#333", fg="white")
     settings_button.place(relx=0.03, rely=0.95, anchor='sw')
 
     start_stop_button = Button(window, text="Start" if not is_running() else "Stop",
                                command=lambda: toggle_start_stop(start_stop_button),
-                               font=("Helvetica", 10),
+                               font=("Segoe UI SemiBold", 10),
                                bg="#333",
                                fg="white",
                                width=10,)
@@ -72,7 +72,7 @@ def open_settings():
 
     settings_window = Toplevel()
     settings_window.title("Settings")
-    settings_window.geometry("366x150")
+    settings_window.geometry("346x150")
     settings_window.configure(bg="#222")
 
     settings_window.grab_set()
@@ -82,7 +82,7 @@ def open_settings():
 
     global sp_dc_entry, ip_entry, port_entry
 
-    Label(settings_window, text="SP_DC Key:", font=("Helvetica", 10), bg="#222", fg="white").grid(row=0, column=0, sticky='e', padx=(10, 2), pady=10)
+    Label(settings_window, text="SP_DC Key:", font=("Segoe UI SemiBold", 10), bg="#222", fg="white").grid(row=0, column=0, sticky='e', padx=(10, 2), pady=10)
     sp_dc_entry = Entry(settings_window, bg="#333", fg="white", insertbackground='white', width=41)
     sp_dc_entry.grid(row=0, column=1, padx=(2, 10), pady=10)
     sp_dc_entry.insert(0, config_data.get('sp_dc', 'Enter SP_DC Key'))
@@ -90,12 +90,12 @@ def open_settings():
     frame_ip_port = Frame(settings_window, bg="#222")
     frame_ip_port.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
 
-    Label(frame_ip_port, text="IP:", font=("Helvetica", 10), bg="#222", fg="white").pack(side="left", padx=5)
+    Label(frame_ip_port, text="IP:", font=("Segoe UI SemiBold", 10), bg="#222", fg="white").pack(side="left", padx=5)
     ip_entry = Entry(frame_ip_port, bg="#333", fg="white", insertbackground='white', width=15)
     ip_entry.pack(side="left", padx=(5, 10))
     ip_entry.insert(0, config_data.get('ip', '127.0.0.1'))
 
-    Label(frame_ip_port, text="Port:", font=("Helvetica", 10), bg="#222", fg="white").pack(side="left", padx=5)
+    Label(frame_ip_port, text="Port:", font=("Segoe UI SemiBold", 10), bg="#222", fg="white").pack(side="left", padx=5)
     port_entry = Entry(frame_ip_port, bg="#333", fg="white", insertbackground='white', width=15)
     port_entry.pack(side="left", padx=(10, 5))
     port_entry.insert(0, config_data.get('port', '9000'))
