@@ -9,7 +9,7 @@ settings_window_open = False
 def start_gui():
     global start_stop_button
     window = Tk()
-    window.title("VRC Spotify OSC v2.0.0")
+    window.title("VRC Spotify OSC v2.1.0")
     window.geometry("450x160")
     window.configure(bg="#222")
     window.resizable(False, False)
