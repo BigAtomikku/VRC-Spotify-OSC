@@ -1,8 +1,9 @@
 from tkinter import Label, Tk, Button, Frame, Entry, Toplevel
-from vsosc import start_main, stop_main, is_running
+from vsosc import toggle_main, is_running
 import json
 
 global song_sync, lyrics, sp_dc_entry, ip_entry, port_entry, start_stop_button
+global sp_dc, ip, port
 settings_window_open = False
 
 def start_gui():
@@ -25,39 +26,30 @@ def start_gui():
     settings_button.place(relx=0.03, rely=0.95, anchor='sw')
 
     start_stop_button = Button(window, text="Start" if not is_running() else "Stop",
-                               command=lambda: toggle_start_stop(start_stop_button),
+                               command=lambda: toggle_start_stop(),
                                font=("Segoe UI SemiBold", 10),
                                bg="#333",
                                fg="white",
                                width=10,)
     start_stop_button.pack(side='bottom', padx=20, pady=10)
 
+    load_config()
     window.mainloop()
 
+def toggle_start_stop():
 
-def force_start_program():
-    start_main()
-    start_stop_button.config(text="Stop")
-    song_sync.config(text="")
-    lyrics.config(text="")
-
-
-def force_stop_program():
-    stop_main()
-    start_stop_button.config(text="Start")
-    song_sync.config(text="Program Stopped")
-
-def toggle_start_stop(button):
     if is_running():
-        stop_main()
-        button.config(text="Start")
+        toggle_main(sp_dc, ip, port)
+        start_stop_button.config(text="Start")
         song_sync.config(text="Program Stopped")
-        lyrics.config(text="")
+        clear_lyric()
+        return
+
     else:
-        start_main()
+        toggle_main(sp_dc, ip, port)
         song_sync.config(text="Program Started")
         lyrics.config(text="Play a song on spotify!")
-        button.config(text="Stop")
+        start_stop_button.config(text="Stop")
 
 def open_settings():
     global settings_window_open
@@ -107,6 +99,26 @@ def close_settings(settings_window):
     settings_window_open = False
     settings_window.destroy()
 
+def load_config():
+    global sp_dc, ip, port
+    clear_lyric()
+    filename = "config.json"
+    keys = ['sp_dc', 'ip', 'port']
+
+    try:
+        with open(filename, 'r') as file:
+            data = json.load(file)
+            values = [data.get(key) for key in keys]
+
+            if None in values:
+                update_lyric("Config file key missing")
+                return
+            sp_dc, ip, port = values
+            update_lyric("Ready to run!")
+
+    except FileNotFoundError:
+        update_lyric("Config file missing, open settings to create one")
+
 
 def update_config(settings_window):
     config_data = {
@@ -116,16 +128,18 @@ def update_config(settings_window):
     }
     with open('config.json', 'w') as config_file:
         json.dump(config_data, config_file, indent=4)
-    print("Config updated!")
 
     if is_running():
-        force_stop_program()
-        force_start_program()
+        toggle_start_stop()
 
+    load_config()
     close_settings(settings_window)
 
-def update_song(name, artist):
-    song_sync.configure(text=name + " - " + artist)
+def update_song(song):
+    song_sync.configure(text=song)
+
+def clear_lyric():
+    lyrics.config(text="")
 
 def update_lyric(lyric):
     lyrics.config(text=lyric)
