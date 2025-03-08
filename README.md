@@ -4,7 +4,7 @@ Briefly shows current song playing and plays synced lyrics in VRChat Chatbox.
 
 ![VRChat_2024-06-12_19-58-58 653_3840x2160_30](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/d1a2b873-9154-4a92-8755-1746c58a23c6)
 
-Additionally, connect to 3rd parties to add more functionality!
+Additionally, connect to 3rd parties like TTS Voice Wizard! (see their instructions on pre-release 1.6.8.5)
 
 ![Screenshot_2024-04-13_114744](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/1cbd8c0f-fb3a-4698-aa34-6f6cd32d96e7)
 
@@ -18,5 +18,4 @@ Additionally, connect to 3rd parties to add more functionality!
 
 ## Known Issues
 
-1) Right now if a song does not contain lyrics, only one message will pop up showing the song name and author and fade away. I will look for the best way to repeat the message so it does not disappear in my current implementations.
-2) If the songs lyrics are too fast it may time out the chatbox. You can see if you are timed out by opening the quick menu
+1) If the songs lyrics are too fast it may time-out the chatbox. You can see if you are timed out by opening the launch pad
