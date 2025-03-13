@@ -10,8 +10,8 @@ Additionally, connect to 3rd parties like TTS Voice Wizard! (see their instructi
 
 ## Installation
 
-1) Go to [spotify](https://open.spotify.com) website
-2) [Find sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
+1) Download [latest release](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/latest/download/VRC-Spotify-OSC.zip)
+2) [Find your sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value and copy it
 3) Run program
 4) Open settings
 5) Paste SP_DC key
