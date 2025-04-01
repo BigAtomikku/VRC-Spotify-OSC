@@ -13,19 +13,19 @@ Additionally, connect to 3rd parties like TTS Voice Wizard! (see their instructi
 1. **Download the latest release:** [VRC-Spotify-OSC.zip](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/latest/download/VRC-Spotify-OSC.zip)
 
 2. **Set up a Spotify Developer App:**  
-   - Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard).
-   - Create a new app.
-   - Add `http://127.0.0.1:5000/callback` as a **Redirect URI** in the app settings.
+   - Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - Create a new app
+   - Add `http://127.0.0.1:5000/callback` as a **Redirect URI** in the app settings
 
-3. **Copy the Client ID** provided by Spotify.
+3. **Copy the Client ID** provided by Spotify
 
-4. **Run the program.**
+4. **Run the program**
 
-5. **Open the settings menu.**
+5. **Open the settings menu**
 
-6. **Paste your Client ID** into the settings and save.
+6. **Paste your Client ID** into the settings and save
 
-7. **Click "Start"** to begin using the application.
+7. **Click "Start"** to begin using the application
 
 ## Known Issues
 
