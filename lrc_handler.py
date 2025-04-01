@@ -14,7 +14,7 @@ class LRCHandler:
         return self.lyrics.get(key)
 
     def update_lyric(self, song_data_queue, user_time):
-        if self.previous_position > 0 and user_time < self.previous_position - 1000:
+        if user_time < self.previous_position - 1000 and user_time < min(self.lyrics.keys()):
             self.previous_lyric = ""
             self.previous_position = user_time
             song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
@@ -24,9 +24,7 @@ class LRCHandler:
 
         if lyric != self.previous_lyric:
             self.previous_lyric = lyric
-            if lyric is None:
-                song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
-            else:
+            if lyric is not None:
                 song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
 
     def get_lyrics(self, song_data_queue, playback, lrclib_api):
@@ -47,7 +45,6 @@ class LRCHandler:
 
                 if filtered_results:
                     self.lyrics = lyrics_to_dict(filtered_results[0].synced_lyrics)
-                    song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
                     return
         song_data_queue.put({'type': 'lyric_update', 'lyric': None})
 
@@ -91,7 +88,7 @@ def lrc_thread(client_id, song_data_queue, running):
         current_track = playback["item"]["id"]
 
         if current_track != last_track:
-            song_data_queue.put({'type': 'song_update', 'playback': playback['item']})
+            song_data_queue.put({'type': 'song_update', 'playback': playback})
             lrc_handler.previous_position = 0
             last_track = current_track
 
@@ -100,17 +97,16 @@ def lrc_thread(client_id, song_data_queue, running):
             else:
                 lrc_handler.get_lyrics(song_data_queue, playback, lrclib_api)
 
-        is_playing = playback["is_playing"]
+        current_playing = playback["is_playing"]
 
-        if playing is None or is_playing != playing:
-            song_data_queue.put({'type': 'is_playing', 'is_playing': is_playing})
+        if playing is None:
+            playing = current_playing
 
-            if is_playing and lrc_handler.previous_lyric:
-                song_data_queue.put({'type': 'lyric_update', 'lyric': lrc_handler.previous_lyric})
+        elif current_playing != playing:
+            song_data_queue.put({'type': 'is_playing', 'is_playing': current_playing})
+            playing = current_playing
 
-            playing = is_playing
-
-        if lrc_handler.lyrics and is_playing:
+        if lrc_handler.lyrics and playback["is_playing"]:
             user_time = playback['progress_ms']
             lrc_handler.update_lyric(song_data_queue, user_time)
 

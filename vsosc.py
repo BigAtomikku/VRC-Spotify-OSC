@@ -2,7 +2,8 @@ import threading
 import queue
 
 from lrc_handler import lrc_thread
-from osc_client import OSCClient
+from chatbox_manager import ChatboxManager
+from param_manager import ParamManager
 
 running = threading.Event()
 lrc_thread_handle = None
@@ -18,9 +19,16 @@ def toggle_main(client_id, ip, port, gui_instance):
     global lrc_thread_handle, osc_thread_handle
     if not running.is_set():
         running.set()
-        osc_client = OSCClient(ip, port, song_data_queue, running, gui_instance)
         lrc_thread_handle = threading.Thread(target=lrc_thread, args=(client_id, song_data_queue, running), daemon=True)
-        osc_thread_handle = threading.Thread(target=osc_client.run, daemon=True)
+
+        if port == 9000:
+            osc_client = ChatboxManager(ip, port, song_data_queue, running, gui_instance)
+            osc_thread_handle = threading.Thread(target=osc_client.run, daemon=True)
+
+        else:
+            param_manager = ParamManager(ip, port, song_data_queue, running, gui_instance)
+            osc_thread_handle = threading.Thread(target=param_manager.run, daemon=True)
+
         lrc_thread_handle.start()
         osc_thread_handle.start()
 

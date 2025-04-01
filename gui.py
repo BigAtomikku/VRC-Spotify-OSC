@@ -46,6 +46,10 @@ class GUI:
     def toggle_start_stop(self):
         client_id, ip, port = self.config.get("client_id"), self.config.get("ip"), self.config.get("port")
 
+        if not client_id or not ip or not port:
+            self.update_lyric("Missing config value(s)")
+            return
+
         if is_running():
             toggle_main(client_id, ip, port, self)
             self.start_stop_button.config(text="Start")
@@ -105,11 +109,12 @@ class GUI:
     def update_config(self, settings_window):
         self.config.update({
             "client_id": self.client_id_entry.get(),
-            "ip": self.ip_entry.get(),
-            "port": int(self.port_entry.get())
+            "ip": self.ip_entry.get() if self.ip_entry.get() else "127.0.0.1",
+            "port": int(self.port_entry.get()) if self.port_entry.get().isdigit() else 9000
         })
         if is_running():
             self.toggle_start_stop()
+        self.update_lyric("Config updated")
         self.close_settings(settings_window)
 
     def update_title(self, text):
