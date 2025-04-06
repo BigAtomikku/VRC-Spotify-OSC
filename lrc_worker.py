@@ -14,6 +14,7 @@ class Playback:
         self.duration_ms = 0
         self.is_playing = False
         self.lyrics = None
+        self.last_poll_time_ms = 0
 
     def fetch_playback(self):
         try:
@@ -36,6 +37,14 @@ class Playback:
 
     def is_instrumental(self):
         return "instrumental" in self.name.lower()
+
+    def update_progress_ms(self):
+        current_time = int(time.time()) * 1000
+        if self.is_playing:
+            time_delta_ms = current_time - self.last_poll_time_ms
+            if time_delta_ms > 0:
+                self.progress_ms = self.progress_ms + time_delta_ms
+        self.last_poll_time_ms = current_time
 
     def get_lyrics(self, lrclib_api):
         self.lyrics = None
@@ -92,43 +101,49 @@ def lrc_thread(client_id, song_data_queue, running):
     playback = Playback(spotify)
     previous_position = 0
     previous_lyric = None
+    last_poll_time = 0
 
     while running.is_set():
-        while not playback.fetch_playback():
-            print("No playback, retrying...")
-            time.sleep(2)
+        if time.time() - last_poll_time >= 1:
+            if not playback.fetch_playback():
+                print("Failed to fetch playback info. Retrying...")
+                time.sleep(1)
+                continue
+            else:
+                last_poll_time = time.time()
+                if playback.has_changed_track(track_id):
+                    song_data_queue.put({'type': 'song_update', 'playback': playback})
+                    previous_position = 0
+                    previous_lyric = None
+                    track_id = playback.id
 
-        if playback.has_changed_track(track_id):
-            song_data_queue.put({'type': 'song_update', 'playback': playback})
-            previous_position = 0
-            previous_lyric = None
-            track_id = playback.id
+                    if playback.is_instrumental():
+                        song_data_queue.put({'type': 'lyric_update', 'lyric': None})
 
-            if playback.is_instrumental():
-                song_data_queue.put({'type': 'lyric_update', 'lyric': None})
+                    elif not playback.get_lyrics(lrclib_api):
+                        song_data_queue.put({'type': 'lyric_update', 'lyric': None})
 
-            elif not playback.get_lyrics(lrclib_api):
-                song_data_queue.put({'type': 'lyric_update', 'lyric': None})
+                if playing is None:
+                    playing = playback.is_playing
 
-        if playing is None:
-            playing = playback.is_playing
+                elif playback.is_playing != playing:
+                    song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
+                    playing = playback.is_playing
 
-        elif playback.is_playing != playing:
-            song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
-            playing = playback.is_playing
+        else:
+            playback.update_progress_ms()
 
-        if playback.lyrics and playback.is_playing:
-            user_time = playback.progress_ms
-            if user_time < previous_position - 1000 and user_time < min(playback.lyrics.keys()):
+        if playback.lyrics:
+            if playback.progress_ms < previous_position - 1000 and playback.progress_ms < min(playback.lyrics.keys()):
                 previous_lyric = ""
                 song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
 
-            previous_position = user_time
-            lyric = playback.current_lyric(user_time)
+            previous_position = playback.progress_ms
+            lyric = playback.current_lyric(playback.progress_ms)
 
             if lyric != previous_lyric:
                 previous_lyric = lyric
                 if lyric is not None:
                     song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
 
-        time.sleep(0.3)
+        time.sleep(0.1)
