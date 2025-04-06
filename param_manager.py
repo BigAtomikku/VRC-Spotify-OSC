@@ -19,6 +19,7 @@ class ParamManager:
     def handle_song_update(self):
         self.gui.update_labels(self.track['name'], self.track['artists'][0]['name'], "")
         self.send_osc_message("")
+        self.last_lyric = None
 
     def handle_play_pause(self, is_playing):
         self.send_osc_message(self.last_lyric) if is_playing else self.send_osc_message("")

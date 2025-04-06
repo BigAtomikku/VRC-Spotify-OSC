@@ -25,23 +25,23 @@ class ChatboxManager:
         self.last_sent = message
 
     def handle_song_update(self):
-        self.gui.update_labels(self.track['name'], self.track['artists'][0]['name'], "")
+        self.gui.update_labels(self.track.name, self.track.artists[0]['name'], "")
+        self.last_lyric = None
+        self.handle_play_pause(self.track.is_playing)
 
     def handle_play_pause(self, is_playing):
         emoji = self.PLAY_EMOJI if is_playing else self.PAUSE_EMOJI
-        song_display = f"{emoji} {self.track['name']} - {self.track['artists'][0]['name']}"
+        song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
 
-        if self.last_lyric and is_playing:
+        self.gui.update_title(f"{self.PLAY_EMOJI if is_playing else self.PAUSE_EMOJI} {self.track.name}")
+
+        if is_playing and self.last_lyric:
             song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
-            self.gui.update_lyric(self.last_lyric)
-
-        if not is_playing:
-            self.gui.update_lyric("Paused")
 
         self.send_osc_message(song_display)
 
     def handle_lyric_update(self, lyric):
-        song_display = f"{self.PLAY_EMOJI} {self.track['name']} - {self.track['artists'][0]['name']}"
+        song_display = f"{self.PLAY_EMOJI} {self.track.name} - {self.track.artists[0]['name']}"
 
         if lyric != "":
             song_display += f" \n {self.MIC_EMOJI} {lyric}"
@@ -57,9 +57,8 @@ class ChatboxManager:
             print(f"Got message: {message}")
 
             if message_type == 'song_update':
-                self.track = message['playback']['item']
+                self.track = message['playback']
                 self.handle_song_update()
-                self.handle_play_pause(message['playback']['is_playing'])
 
             elif message_type == 'is_playing':
                 self.handle_play_pause(message['is_playing'])
@@ -67,7 +66,8 @@ class ChatboxManager:
             elif message['type'] == 'lyric_update':
                 if message['lyric'] is None:
                     self.gui.update_lyric("Lyrics for this track are not available")
-                self.handle_lyric_update(message['lyric'])
+                else:
+                    self.handle_lyric_update(message['lyric'])
 
             self.last_update_time = time.time()
 

@@ -1,7 +1,7 @@
 import threading
 import queue
 
-from lrc_handler import lrc_thread
+from lrc_worker import lrc_thread
 from chatbox_manager import ChatboxManager
 from param_manager import ParamManager
 
