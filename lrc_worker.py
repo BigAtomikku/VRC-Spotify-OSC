@@ -107,7 +107,7 @@ def lrc_thread(client_id, song_data_queue, running):
         if time.time() - last_poll_time >= 1:
             if not playback.fetch_playback():
                 print("Failed to fetch playback info. Retrying...")
-                time.sleep(1)
+                time.sleep(2)
                 continue
             else:
                 last_poll_time = time.time()

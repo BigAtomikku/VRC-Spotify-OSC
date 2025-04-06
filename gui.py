@@ -26,10 +26,14 @@ class GUI:
                                  fg="white")
         self.title_label.pack(padx=10, pady=(10, 0))
 
-        self.artist_label = Label(self.window, text="Press start to activate", font=("Segoe UI", 14), bg="#222", fg="white")
+        self.artist_label = Label(self.window, text="Press start to activate",
+                                  font=("Segoe UI", 14),
+                                  bg="#222",
+                                  fg="white")
         self.artist_label.pack(padx=10, pady=(0, 10))
 
-        self.lyrics_label = Label(self.window, text="Remember to configure settings first!", font=("Segoe UI", 11), bg="#222", fg="white")
+        self.lyrics_label = Label(self.window, text="Remember to configure settings first!", font=("Segoe UI", 11),
+                                  bg="#222", fg="white")
         self.lyrics_label.pack(padx=10, pady=(10, 0))
 
         settings_button = Button(self.window, text="Settings", font=("Segoe UI SemiBold", 9),
@@ -74,12 +78,9 @@ class GUI:
         self.settings_window_open = True
         settings_window.protocol("WM_DELETE_WINDOW", lambda: self.close_settings(settings_window))
 
-        Label(settings_window, text="Client ID:", font=("Segoe UI SemiBold", 10), bg="#222", fg="white").grid(row=0,
-                                                                                                              column=0,
-                                                                                                              sticky='e',
-                                                                                                              padx=(
-                                                                                                              10, 2),
-                                                                                                              pady=10)
+        Label(settings_window, text="Client ID:",
+              font=("Segoe UI SemiBold", 10),
+              bg="#222", fg="white").grid(row=0, column=0, sticky='e', padx=(10, 2), pady=10)
         self.client_id_entry = Entry(settings_window, bg="#333", fg="white", insertbackground='white', width=41)
         self.client_id_entry.grid(row=0, column=1, padx=(2, 10), pady=10)
         self.client_id_entry.insert(0, self.config.get('client_id', 'Enter Client ID'))
