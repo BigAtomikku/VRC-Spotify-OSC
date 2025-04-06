@@ -1,3 +1,4 @@
 python-osc~=1.9.3
 lrclibapi~=0.3.1
 spotipy~=2.25.1
+requests~=2.32.3
