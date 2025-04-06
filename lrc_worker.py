@@ -28,8 +28,7 @@ class Playback:
                 return True
             return False
         except requests.exceptions.ReadTimeout:
-            print("Request timed out. Retrying...")
-            time.sleep(1)
+            print("Request timed out")
             return False
 
     def has_changed_track(self, previous_id):
@@ -95,7 +94,9 @@ def lrc_thread(client_id, song_data_queue, running):
     previous_lyric = None
 
     while running.is_set():
-        playback.fetch_playback()
+        while not playback.fetch_playback():
+            print("No playback, retrying...")
+            time.sleep(2)
 
         if playback.has_changed_track(track_id):
             song_data_queue.put({'type': 'song_update', 'playback': playback})
