@@ -44,7 +44,7 @@ class SpotifyOSCApp:
                 self.build_title_bar(),
                 self.content_container,
                 self.settings_container
-            ], expand=True, spacing=5),
+            ], spacing=5),
             border_radius=20,
             bgcolor=self.bg_color,
             shadow=ft.BoxShadow(

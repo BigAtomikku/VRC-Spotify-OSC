@@ -13,12 +13,13 @@ class SettingsPanel:
         text_color = app.text_color
         bg_color = app.bg_color
         accent_color = app.accent_color
+        form_color = Colors.GREY_800
 
         ip_field = ft.TextField(
             label="IP",
             value=config.get('ip', '127.0.0.1'),
             width=170,
-            bgcolor=Colors.GREY_800,
+            bgcolor=form_color,
             color=text_color
         )
 
@@ -26,7 +27,19 @@ class SettingsPanel:
             label="Port",
             value=config.get('port', 9000),
             width=170,
-            bgcolor=Colors.GREY_800,
+            bgcolor=form_color,
+            color=text_color
+        )
+
+        lyric_provider_dropdown = ft.DropdownM2(
+            label="Lyric Provider",
+            value=config.get('lyric_provider', 'Spotify'),
+            options=[
+                ft.dropdown.Option("Spotify"),
+                ft.dropdown.Option("LRCLibAPI"),
+            ],
+            width=350,
+            bgcolor=form_color,
             color=text_color
         )
 
@@ -34,14 +47,39 @@ class SettingsPanel:
             label="Client ID",
             value=config.get('client_id', ''),
             width=350,
-            bgcolor=Colors.GREY_800,
-            color=text_color
+            bgcolor=form_color,
+            color=text_color,
+            visible=config.get('lyric_provider', 'Spotify') == 'LRCLibAPI'
         )
+
+        sp_dc_field = ft.TextField(
+            label="SP_DC",
+            value=config.get('sp_dc', ''),
+            width=350,
+            bgcolor=form_color,
+            color=text_color,
+            visible=config.get('lyric_provider', 'Spotify') == 'Spotify'
+        )
+
+        def update_provider_fields(e):
+            if lyric_provider_dropdown.value == "Spotify":
+                client_id_field.visible = False
+                sp_dc_field.visible = True
+            else:
+                client_id_field.visible = True
+                sp_dc_field.visible = False
+            page.update()
+
+        lyric_provider_dropdown.on_change = update_provider_fields
 
         def save_settings(e):
             config.set('ip', ip_field.value)
             config.set('port', port_field.value)
-            config.set('client_id', client_id_field.value)
+            config.set('provider', lyric_provider_dropdown.value)
+            if lyric_provider_dropdown.value == "Spotify":
+                config.set('sp_dc', sp_dc_field.value)
+            else:
+                config.set('client_id', client_id_field.value)
             app.service.stop()
             app.start_service()
 
@@ -61,9 +99,14 @@ class SettingsPanel:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                     ),
 
-                    ft.Text("Spotify Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
+                    ft.Text("Lyrics Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
+                    lyric_provider_dropdown,
+                    ft.Container(height=5),
                     client_id_field,
+                    sp_dc_field,
+
                     ft.Container(height=20),
+
                     ft.ElevatedButton(
                         "Save Settings",
                         icon=Icons.SAVE,
