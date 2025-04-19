@@ -33,7 +33,7 @@ class SettingsPanel:
 
         lyric_provider_dropdown = ft.DropdownM2(
             label="Lyric Provider",
-            value=config.get('lyric_provider', 'Spotify'),
+            value=config.get('provider'),
             options=[
                 ft.dropdown.Option("Spotify"),
                 ft.dropdown.Option("LRCLibAPI"),

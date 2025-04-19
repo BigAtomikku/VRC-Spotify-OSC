@@ -101,15 +101,21 @@ class SpotifyOSCApp:
         self.page.update()
 
     def start_service(self):
-        client_id = self.config.get('client_id')
+        provider = self.config.get('provider')
+
+        if provider == "Spotify":
+            key = self.config.get('sp_dc')
+        else:
+            key = self.config.get('client_id')
+
         ip = self.config.get('ip')
         port = self.config.get('port')
 
-        if client_id:
+        if key:
             def update_track_info(title=None, artist=None, lyric=None, progress=None, duration=None, album_art=None):
                 self.content_panel.update_track_info(title, artist, lyric, progress, duration, album_art)
 
-            self.service.start(client_id, ip, port, update_track_info)
+            self.service.start(provider, key, ip, port, update_track_info)
 
 
 def main():

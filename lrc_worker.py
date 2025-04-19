@@ -1,12 +1,14 @@
 import asyncio
 import requests
+import spotipy
+import syrics.api
+import syrics.exceptions
 from lrclib import LrcLibAPI
-from spotipy import Spotify, SpotifyPKCE
 
 
 class Playback:
-    def __init__(self, spotify, update_track_info):
-        self.spotify = spotify
+    def __init__(self, update_track_info):
+        self.spotify = None
         self.id = None
         self.name = None
         self.artists = []
@@ -16,10 +18,19 @@ class Playback:
         self.album_cover = None
         self.lyrics = None
         self.update_track_info = update_track_info
+        self.lyrics_provider = None
+
+        if self.lyrics_provider == "LRCLibAPI":
+            self.lyrics_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
 
     def fetch_playback(self):
         try:
-            data = self.spotify.current_playback()
+            data = None
+            match self.lyrics_provider:
+                case "Spotify":
+                    data = self.spotify.get_current_song()
+                case "LRCLibAPI":
+                    data = self.spotify.current_playback()
 
             if data and data['item']:
                 self.id = data['item']['id']
@@ -41,7 +52,14 @@ class Playback:
     def is_instrumental(self):
         return "instrumental" in self.name.lower()
 
-    def get_lyrics(self, lrclib_api):
+    def get_lyrics(self):
+        match self.lyrics_provider:
+            case "Spotify":
+                return self.get_lyrics_syrics()
+            case "LRCLibAPI":
+                return self.get_lyrics_lrclib()
+
+    def get_lyrics_lrclib(self):
         self.lyrics = None
         track_duration = self.duration_ms / 1000
         artists = self.artists
@@ -52,38 +70,48 @@ class Playback:
 
             for artist in artists:
                 print(f"Searching {track_name} by {artist['name']} with duration {track_duration}s via LRCLib")
-                results = lrclib_api.search_lyrics(track_name=track_name, artist_name=artist['name'])
+                results = self.lyrics_api.search_lyrics(track_name=track_name, artist_name=artist['name'])
                 filtered_results = [r for r in results if r.synced_lyrics and abs(r.duration - track_duration) <= 3]
 
                 if filtered_results:
-                    self.lyrics = lyrics_to_dict(filtered_results[0].synced_lyrics)
+                    self.lrc_to_dictionary(filtered_results[0].synced_lyrics)
                     return True
 
         return False
+
+    def get_lyrics_syrics(self):
+        track = self.spotify.get_current_song()['item']['id']
+        lines = self.spotify.get_lyrics(track)['lyrics']['lines']
+
+        lyrics_dictionary = {
+            int(line['startTimeMs']): line['words']
+            for line in lines
+        }
+
+        self.lyrics = lyrics_dictionary
 
     def current_lyric(self, user_time):
         key = max((k for k in self.lyrics.keys() if k < user_time), default=None)
         return self.lyrics.get(key)
 
+    def lrc_to_dictionary(self, lrc):
+        lines = lrc.strip().split('\n')
+        lrc_dict = {}
 
-def lyrics_to_dict(lrc):
-    lines = lrc.strip().split('\n')
-    lrc_dict = {}
+        for line in lines:
+            timestamp, lyric = line.split(']', 1)
+            timestamp = timestamp[1:]
+            lyric = lyric.strip()
 
-    for line in lines:
-        timestamp, lyric = line.split(']', 1)
-        timestamp = timestamp[1:]
-        lyric = lyric.strip()
+            minutes, seconds = timestamp.split(':')
+            total_ms = int(minutes) * 60 * 1000 + float(seconds) * 1000
 
-        minutes, seconds = timestamp.split(':')
-        total_ms = int(minutes) * 60 * 1000 + float(seconds) * 1000
+            lrc_dict[int(total_ms)] = lyric
 
-        lrc_dict[int(total_ms)] = lyric
-
-    return lrc_dict
+        self.lyrics = lrc_dict
 
 
-async def poll_playback(playback, lrclib_api, song_data_queue, running):
+async def poll_playback(playback, song_data_queue, running):
     track_id = None
     playing = None
 
@@ -98,7 +126,7 @@ async def poll_playback(playback, lrclib_api, song_data_queue, running):
                 song_data_queue.put({'type': 'song_update', 'playback': playback})
                 track_id = playback.id
 
-                if playback.is_instrumental() or not playback.get_lyrics(lrclib_api):
+                if playback.is_instrumental() or not playback.get_lyrics():
                     playback.update_track_info(lyric="Lyrics for this track are not available")
 
             if playing is None or playback.is_playing != playing:
@@ -131,18 +159,42 @@ async def lyric_update_loop(playback, song_data_queue, running):
         await asyncio.sleep(0.1)
 
 
-async def lrc_loop(client_id, song_data_queue, running, update_track_info):
+def connect_to_lrc_lib(client_id):
     lrclib_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
     redirect_uri = "http://127.0.0.1:5000/callback"
     scope = "user-read-playback-state"
 
-    auth_manager = SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
-    spotify = Spotify(auth_manager=auth_manager)
+    auth_manager = spotipy.SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
+    spotify = spotipy.Spotify(auth_manager=auth_manager)
+    return lrclib_api, spotify
 
-    playback = Playback(spotify, update_track_info)
+
+def connect_to_spotify(sp_dc):
+    try:
+        return syrics.api.Spotify(sp_dc)
+    except syrics.exceptions.NotValidSp_Dc as e:
+        print(e)
+        return None
+
+
+async def lrc_loop(provider, key, song_data_queue, running, update_track_info):
+    playback = Playback(update_track_info=update_track_info)
+
+    match provider:
+        case "Spotify":
+            print("Connecting to Spotify")
+            playback.spotify = connect_to_spotify(key)
+            playback.lyrics_provider = "Spotify"
+
+        case "LRCLibAPI":
+            print("Connecting to LRCLibAPI")
+            lrclib_api, spotify = connect_to_lrc_lib(key)
+            playback.spotify = spotify
+            playback.lyrics_api = lrclib_api
+            playback.lyrics_provider = "LRCLibAPI"
 
     await asyncio.gather(
-        poll_playback(playback, lrclib_api, song_data_queue, running),
+        poll_playback(playback, song_data_queue, running),
         lyric_update_loop(playback, song_data_queue, running)
     )
 

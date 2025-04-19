@@ -15,14 +15,14 @@ class ServiceManager:
         self.queue = queue.Queue()
         self.lock = threading.Lock()
 
-    def start(self, client_id, ip, port, update_cb):
+    def start(self, provider, key, ip, port, update_cb):
         with self.lock:
             if not self.running.is_set():
                 self.running.set()
 
                 def run_lrc_loop():
                     print("[ServiceManager] Starting LRC loop...")
-                    asyncio.run(lrc_loop(client_id, self.queue, self.running, update_cb))
+                    asyncio.run(lrc_loop(provider, key, self.queue, self.running, update_cb))
 
                 self.lrc_thread = threading.Thread(target=run_lrc_loop, daemon=True)
 
