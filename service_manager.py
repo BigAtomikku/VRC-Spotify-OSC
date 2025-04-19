@@ -19,13 +19,16 @@ class ServiceManager:
             self.running.set()
 
             def run_lrc_loop():
+                print("[ServiceManager] Starting LRC loop...")
                 asyncio.run(lrc_loop(client_id, self.queue, self.running, update_cb))
 
             self.lrc_thread = threading.Thread(target=run_lrc_loop, daemon=True)
 
             if port == 9000:
+                print("[ServiceManager] Starting Chatbox Manager...")
                 osc = ChatboxManager(ip, port, self.queue, self.running)
             else:
+                print("[ServiceManager] Starting Param Manager...")
                 osc = ParamManager(ip, port, self.queue, self.running)
 
             self.osc_thread = threading.Thread(target=osc.run, daemon=True)
@@ -34,7 +37,17 @@ class ServiceManager:
 
     def stop(self):
         self.running.clear()
+
+        if self.lrc_thread and self.lrc_thread.is_alive():
+            self.lrc_thread.join()
+        if self.osc_thread and self.osc_thread.is_alive():
+            self.osc_thread.join()
+
         self.lrc_thread = None
         self.osc_thread = None
+
         while not self.queue.empty():
-            self.queue.get_nowait()
+            try:
+                self.queue.get_nowait()
+            except queue.Empty:
+                break

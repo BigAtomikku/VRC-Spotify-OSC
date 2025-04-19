@@ -83,11 +83,11 @@ def lyrics_to_dict(lrc):
     return lrc_dict
 
 
-async def poll_playback(playback, lrclib_api, song_data_queue):
+async def poll_playback(playback, lrclib_api, song_data_queue, running):
     track_id = None
     playing = None
 
-    while True:
+    while running.is_set():
         if playback.fetch_playback():
             playback.update_track_info(progress=playback.progress_ms, duration=playback.duration_ms)
 
@@ -142,6 +142,8 @@ async def lrc_loop(client_id, song_data_queue, running, update_track_info):
     playback = Playback(spotify, update_track_info)
 
     await asyncio.gather(
-        poll_playback(playback, lrclib_api, song_data_queue),
+        poll_playback(playback, lrclib_api, song_data_queue, running),
         lyric_update_loop(playback, song_data_queue, running)
     )
+
+    print("[LRC Loop] Exiting cleanly")

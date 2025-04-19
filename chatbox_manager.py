@@ -76,4 +76,6 @@ class ChatboxManager:
             self.process_queue_messages()
             self.update()
             time.sleep(0.1)
+
         self.send_osc_message("Shutting Down...")
+        print("[Chatbox Manager] Exiting cleanly")

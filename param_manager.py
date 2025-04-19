@@ -48,3 +48,4 @@ class ParamManager:
             time.sleep(0.1)
 
         self.send_osc_message("")
+        print("[Param Manager] Exiting cleanly")
