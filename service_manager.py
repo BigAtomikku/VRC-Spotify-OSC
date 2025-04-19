@@ -13,41 +13,44 @@ class ServiceManager:
         self.lrc_thread = None
         self.osc_thread = None
         self.queue = queue.Queue()
+        self.lock = threading.Lock()
 
     def start(self, client_id, ip, port, update_cb):
-        if not self.running.is_set():
-            self.running.set()
+        with self.lock:
+            if not self.running.is_set():
+                self.running.set()
 
-            def run_lrc_loop():
-                print("[ServiceManager] Starting LRC loop...")
-                asyncio.run(lrc_loop(client_id, self.queue, self.running, update_cb))
+                def run_lrc_loop():
+                    print("[ServiceManager] Starting LRC loop...")
+                    asyncio.run(lrc_loop(client_id, self.queue, self.running, update_cb))
 
-            self.lrc_thread = threading.Thread(target=run_lrc_loop, daemon=True)
+                self.lrc_thread = threading.Thread(target=run_lrc_loop, daemon=True)
 
-            if port == 9000:
-                print("[ServiceManager] Starting Chatbox Manager...")
-                osc = ChatboxManager(ip, port, self.queue, self.running)
-            else:
-                print("[ServiceManager] Starting Param Manager...")
-                osc = ParamManager(ip, port, self.queue, self.running)
+                if port == 9000:
+                    print("[ServiceManager] Starting Chatbox Manager...")
+                    osc = ChatboxManager(ip, port, self.queue, self.running)
+                else:
+                    print("[ServiceManager] Starting Param Manager...")
+                    osc = ParamManager(ip, port, self.queue, self.running)
 
-            self.osc_thread = threading.Thread(target=osc.run, daemon=True)
-            self.lrc_thread.start()
-            self.osc_thread.start()
+                self.osc_thread = threading.Thread(target=osc.run, daemon=True)
+                self.lrc_thread.start()
+                self.osc_thread.start()
 
     def stop(self):
-        self.running.clear()
+        with self.lock:
+            self.running.clear()
 
-        if self.lrc_thread and self.lrc_thread.is_alive():
-            self.lrc_thread.join()
-        if self.osc_thread and self.osc_thread.is_alive():
-            self.osc_thread.join()
+            if self.lrc_thread and self.lrc_thread.is_alive():
+                self.lrc_thread.join()
+            if self.osc_thread and self.osc_thread.is_alive():
+                self.osc_thread.join()
 
-        self.lrc_thread = None
-        self.osc_thread = None
+            self.lrc_thread = None
+            self.osc_thread = None
 
-        while not self.queue.empty():
-            try:
-                self.queue.get_nowait()
-            except queue.Empty:
-                break
+            while not self.queue.empty():
+                try:
+                    self.queue.get_nowait()
+                except queue.Empty:
+                    break
