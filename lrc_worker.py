@@ -81,14 +81,19 @@ class Playback:
 
     def get_lyrics_syrics(self):
         track = self.spotify.get_current_song()['item']['id']
-        lines = self.spotify.get_lyrics(track)['lyrics']['lines']
+        lyrics_data = self.spotify.get_lyrics(track)
 
+        if not lyrics_data or 'lyrics' not in lyrics_data or 'lines' not in lyrics_data['lyrics']:
+            return False
+
+        lines = lyrics_data['lyrics']['lines']
         lyrics_dictionary = {
             int(line['startTimeMs']): line['words']
             for line in lines
         }
 
         self.lyrics = lyrics_dictionary
+        return True
 
     def current_lyric(self, user_time):
         key = max((k for k in self.lyrics.keys() if k < user_time), default=None)
