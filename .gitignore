@@ -3,3 +3,5 @@ config.json
 .idea
 testing
 compile.txt
+__pycache__
+gui/__pycache__/
