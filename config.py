@@ -33,6 +33,6 @@ class ConfigManager:
     def get(self, key, default=None):
         return self.config.get(key, default)
 
-    def update(self, updates):
-        self.config.update(updates)
+    def set(self, key, value):
+        self.config[key] = value
         save(self.config)

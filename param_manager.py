@@ -5,11 +5,10 @@ import time
 class ParamManager:
     OSC_LYRICS_PATH = "/Atomikku/VRCSpotifyOSC/Lyrics"
 
-    def __init__(self, ip, port, song_data_queue, running, gui):
+    def __init__(self, ip, port, song_data_queue, running):
         self.client = SimpleUDPClient(ip, port)
         self.song_data_queue = song_data_queue
         self.running = running
-        self.gui = gui
         self.track = None
         self.last_lyric = None
 
@@ -17,7 +16,6 @@ class ParamManager:
         self.client.send_message(self.OSC_LYRICS_PATH, message)
 
     def handle_song_update(self):
-        self.gui.update_labels(self.track['name'], self.track['artists'][0]['name'], "")
         self.send_osc_message("")
         self.last_lyric = None
 
@@ -25,7 +23,6 @@ class ParamManager:
         self.send_osc_message(self.last_lyric) if is_playing else self.send_osc_message("")
 
     def handle_lyric_update(self, lyric):
-        self.gui.update_lyric(lyric)
         self.send_osc_message(lyric)
         self.last_lyric = lyric
 
@@ -36,15 +33,13 @@ class ParamManager:
             print(f"Got message: {message}")
 
             if message_type == 'song_update':
-                self.track = message['playback']['item']
+                self.track = message['playback']
                 self.handle_song_update()
 
             elif message_type == 'is_playing':
                 self.handle_play_pause(message['is_playing'])
 
             elif message['type'] == 'lyric_update':
-                if message['lyric'] is None:
-                    self.gui.update_lyric("Lyrics for this track are not available")
                 self.handle_lyric_update(message['lyric'])
 
     def run(self):

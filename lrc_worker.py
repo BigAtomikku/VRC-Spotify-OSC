@@ -1,11 +1,11 @@
-import time
+import asyncio
 import requests
 from lrclib import LrcLibAPI
 from spotipy import Spotify, SpotifyPKCE
 
 
 class Playback:
-    def __init__(self, spotify):
+    def __init__(self, spotify, update_track_info):
         self.spotify = spotify
         self.id = None
         self.name = None
@@ -13,12 +13,14 @@ class Playback:
         self.progress_ms = 0
         self.duration_ms = 0
         self.is_playing = False
+        self.album_cover = None
         self.lyrics = None
-        self.last_poll_time_ms = 0
+        self.update_track_info = update_track_info
 
     def fetch_playback(self):
         try:
             data = self.spotify.current_playback()
+
             if data and data['item']:
                 self.id = data['item']['id']
                 self.name = data['item']['name']
@@ -26,6 +28,7 @@ class Playback:
                 self.progress_ms = data['progress_ms']
                 self.duration_ms = data['item']['duration_ms']
                 self.is_playing = data['is_playing']
+                self.album_cover = data['item']['album']['images'][0]['url']
                 return True
             return False
         except requests.exceptions.ReadTimeout:
@@ -37,14 +40,6 @@ class Playback:
 
     def is_instrumental(self):
         return "instrumental" in self.name.lower()
-
-    def update_progress_ms(self):
-        current_time = int(time.time()) * 1000
-        if self.is_playing:
-            time_delta_ms = current_time - self.last_poll_time_ms
-            if time_delta_ms > 0:
-                self.progress_ms = self.progress_ms + time_delta_ms
-        self.last_poll_time_ms = current_time
 
     def get_lyrics(self, lrclib_api):
         self.lyrics = None
@@ -88,54 +83,40 @@ def lyrics_to_dict(lrc):
     return lrc_dict
 
 
-def lrc_thread(client_id, song_data_queue, running):
-    lrclib_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
-    redirect_uri = "http://127.0.0.1:5000/callback"
-    scope = "user-read-playback-state"
-
-    auth_manager = SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
-    spotify = Spotify(auth_manager=auth_manager)
-
+async def poll_playback(playback, lrclib_api, song_data_queue):
     track_id = None
     playing = None
-    playback = Playback(spotify)
+
+    while True:
+        if playback.fetch_playback():
+            playback.update_track_info(progress=playback.progress_ms, duration=playback.duration_ms)
+
+            if playback.has_changed_track(track_id):
+                playback.update_track_info(title=playback.name,
+                                           artist=", ".join(artist['name'] for artist in playback.artists),
+                                           album_art=playback.album_cover, lyric="")
+                song_data_queue.put({'type': 'song_update', 'playback': playback})
+                track_id = playback.id
+
+                if playback.is_instrumental() or not playback.get_lyrics(lrclib_api):
+                    playback.update_track_info(lyric="Lyrics for this track are not available")
+
+            if playing is None or playback.is_playing != playing:
+                song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
+                playing = playback.is_playing
+        else:
+            print("Failed to fetch playback info. Retrying...")
+
+        await asyncio.sleep(0.6)
+
+
+async def lyric_update_loop(playback, song_data_queue, running):
     previous_position = 0
     previous_lyric = None
-    last_poll_time = 0
 
     while running.is_set():
-        if time.time() - last_poll_time >= 1:
-            if not playback.fetch_playback():
-                print("Failed to fetch playback info. Retrying...")
-                time.sleep(2)
-                continue
-            else:
-                last_poll_time = time.time()
-                if playback.has_changed_track(track_id):
-                    song_data_queue.put({'type': 'song_update', 'playback': playback})
-                    previous_position = 0
-                    previous_lyric = None
-                    track_id = playback.id
-
-                    if playback.is_instrumental():
-                        song_data_queue.put({'type': 'lyric_update', 'lyric': None})
-
-                    elif not playback.get_lyrics(lrclib_api):
-                        song_data_queue.put({'type': 'lyric_update', 'lyric': None})
-
-                if playing is None:
-                    playing = playback.is_playing
-
-                elif playback.is_playing != playing:
-                    song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
-                    playing = playback.is_playing
-
-        else:
-            playback.update_progress_ms()
-
         if playback.lyrics:
             if playback.progress_ms < previous_position - 1000 and playback.progress_ms < min(playback.lyrics.keys()):
-                previous_lyric = ""
                 song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
 
             previous_position = playback.progress_ms
@@ -144,6 +125,23 @@ def lrc_thread(client_id, song_data_queue, running):
             if lyric != previous_lyric:
                 previous_lyric = lyric
                 if lyric is not None:
+                    playback.update_track_info(lyric=lyric)
                     song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
 
-        time.sleep(0.1)
+        await asyncio.sleep(0.1)
+
+
+async def lrc_loop(client_id, song_data_queue, running, update_track_info):
+    lrclib_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
+    redirect_uri = "http://127.0.0.1:5000/callback"
+    scope = "user-read-playback-state"
+
+    auth_manager = SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
+    spotify = Spotify(auth_manager=auth_manager)
+
+    playback = Playback(spotify, update_track_info)
+
+    await asyncio.gather(
+        poll_playback(playback, lrclib_api, song_data_queue),
+        lyric_update_loop(playback, song_data_queue, running)
+    )

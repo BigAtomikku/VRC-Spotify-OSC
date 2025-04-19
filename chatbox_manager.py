@@ -9,31 +9,27 @@ class ChatboxManager:
     PAUSE_EMOJI = "\U000023F8"
     MIC_EMOJI = "\U0001F3A4"
 
-    def __init__(self, ip, port, song_data_queue, running, gui):
+    def __init__(self, ip, port, song_data_queue, running):
         self.client = SimpleUDPClient(ip, port)
         self.song_data_queue = song_data_queue
         self.running = running
-        self.gui = gui
         self.track = None
         self.last_sent = ""
         self.last_lyric = None
         self.last_update_time = time.time()
-        self.refresh_timeout = 5
+        self.refresh_timeout = 10
 
     def send_osc_message(self, message):
         self.client.send_message(self.OSC_CHATBOX_PATH, [message, True, False])
         self.last_sent = message
 
     def handle_song_update(self):
-        self.gui.update_labels(self.track.name, self.track.artists[0]['name'], "")
         self.last_lyric = None
         self.handle_play_pause(self.track.is_playing)
 
     def handle_play_pause(self, is_playing):
         emoji = self.PLAY_EMOJI if is_playing else self.PAUSE_EMOJI
         song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
-
-        self.gui.update_title(f"{self.PLAY_EMOJI if is_playing else self.PAUSE_EMOJI} {self.track.name}")
 
         if is_playing and self.last_lyric:
             song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
@@ -46,7 +42,6 @@ class ChatboxManager:
         if lyric != "":
             song_display += f" \n {self.MIC_EMOJI} {lyric}"
 
-        self.gui.update_lyric(lyric)
         self.send_osc_message(song_display)
         self.last_lyric = lyric
 
@@ -64,10 +59,7 @@ class ChatboxManager:
                 self.handle_play_pause(message['is_playing'])
 
             elif message['type'] == 'lyric_update':
-                if message['lyric'] is None:
-                    self.gui.update_lyric("Lyrics for this track are not available")
-                else:
-                    self.handle_lyric_update(message['lyric'])
+                self.handle_lyric_update(message['lyric'])
 
             self.last_update_time = time.time()
 
@@ -84,5 +76,4 @@ class ChatboxManager:
             self.process_queue_messages()
             self.update()
             time.sleep(0.1)
-
         self.send_osc_message("Shutting Down...")
