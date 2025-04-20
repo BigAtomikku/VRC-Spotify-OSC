@@ -79,7 +79,6 @@ class ChatboxManager(BaseOSCManager):
             elif self.last_lyric:
                 song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
 
-        print(f"Sending: {song_display}")
         self.client.send_message(self.osc_path, song_display)
         self.last_update_time = time.time()
 
