@@ -7,8 +7,8 @@ Display your current Spotify track and synchronized lyrics in the VRChat Chatbox
 </div>
 
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/17ac8748-bbcf-4604-afea-91c9d8d24aa3" width="49%" alt="Home Screen" />
-  <img src="https://github.com/user-attachments/assets/9df95f7d-d96d-4a62-a776-fb9c79675789" width="49%" alt="Settings Screen" />
+  <img src="https://github.com/user-attachments/assets/4b57ea6c-9d13-4ec3-a25a-e6f42ea83814" width="49%" alt="Home Screen" />
+  <img src="https://github.com/user-attachments/assets/1a229703-560b-4c47-a9a7-8c2c6673a0f0" width="49%" alt="Settings Screen" />
 </div>
 
 You can also connect to third-party applications like TTS Voice Wizard! (requires pre-release 1.6.8.5 or above)
@@ -19,7 +19,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 ## Installation
 
-1. **Download the latest release:** [VRC-Lyrics.zip](https://github.com/BigAtomikku/VRC-LyricsC/releases/latest)
+1. **Download the [latest release](https://github.com/BigAtomikku/VRC-Lyrics/releases/latest)**
 
 2. **Run the program**
 
