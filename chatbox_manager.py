@@ -39,7 +39,7 @@ class ChatboxManager:
     def handle_lyric_update(self, lyric):
         song_display = f"{self.PLAY_EMOJI} {self.track.name} - {self.track.artists[0]['name']}"
 
-        if lyric != "":
+        if lyric != "" and lyric != "♪":
             song_display += f" \n {self.MIC_EMOJI} {lyric}"
 
         self.send_osc_message(song_display)

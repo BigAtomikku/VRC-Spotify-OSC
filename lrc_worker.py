@@ -90,10 +90,6 @@ class Playback:
         self.lyrics = lyrics_dictionary
         return True
 
-    def current_lyric(self, user_time):
-        key = max((k for k in self.lyrics.keys() if k < user_time), default=None)
-        return self.lyrics.get(key)
-
     def lrc_to_dictionary(self, lrc):
         lines = lrc.strip().split('\n')
         lrc_dict = {}
@@ -140,7 +136,7 @@ async def poll_playback(playback, song_data_queue, running):
 
 async def lyric_update_loop(playback, song_data_queue, running):
     previous_position = 0
-    previous_lyric = None
+    previous_key = None
 
     while running.is_set():
         if playback.lyrics:
@@ -148,13 +144,14 @@ async def lyric_update_loop(playback, song_data_queue, running):
                 song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
 
             previous_position = playback.progress_ms
-            lyric = playback.current_lyric(playback.progress_ms)
+            current_key = max((k for k in playback.lyrics.keys() if k <= playback.progress_ms), default=None)
 
-            if lyric != previous_lyric:
-                previous_lyric = lyric
+            if current_key is not None and current_key != previous_key:
+                lyric = playback.lyrics[current_key]
                 if lyric is not None:
                     playback.update_track_info(lyric=lyric)
                     song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
+                previous_key = current_key
 
         await asyncio.sleep(0.1)
 

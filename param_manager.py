@@ -23,7 +23,10 @@ class ParamManager:
         self.send_osc_message(self.last_lyric) if is_playing else self.send_osc_message("")
 
     def handle_lyric_update(self, lyric):
-        self.send_osc_message(lyric)
+        if lyric == "♪":
+            self.send_osc_message("")
+        else:
+            self.send_osc_message(lyric)
         self.last_lyric = lyric
 
     def process_queue_messages(self):

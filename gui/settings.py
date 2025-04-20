@@ -74,7 +74,7 @@ class SettingsPanel:
 
         def save_settings():
             config.set('ip', ip_field.value)
-            config.set('port', port_field.value)
+            config.set('port', int(port_field.value))
             config.set('provider', lyric_provider_dropdown.value)
             if lyric_provider_dropdown.value == "Spotify":
                 config.set('sp_dc', sp_dc_field.value)
