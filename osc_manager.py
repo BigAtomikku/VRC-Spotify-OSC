@@ -8,18 +8,19 @@ class BaseOSCManager:
         self.song_data_queue = song_data_queue
         self.running = running
         self.track = None
-        self.last_lyric = None
+        self.last_lyric = ""
         self.osc_path = osc_path
-        self.last_sent = ""
+        self.is_playing = None
 
-    def send_osc_message(self, message):
-        self.client.send_message(self.osc_path, message)
-        self.last_sent = message
+    def send_osc_message(self, lyric=None):
+        if lyric is not None:
+            self.client.send_message(self.osc_path, lyric)
+
+        else:
+            self.client.send_message(self.osc_path, self.last_lyric) if self.is_playing \
+                else self.client.send_message(self.osc_path, "")
 
     def handle_song_update(self):
-        raise NotImplementedError("Subclasses should implement this method")
-
-    def handle_play_pause(self, is_playing):
         raise NotImplementedError("Subclasses should implement this method")
 
     def handle_lyric_update(self, lyric):
@@ -36,7 +37,8 @@ class BaseOSCManager:
                 self.handle_song_update()
 
             elif message_type == 'is_playing':
-                self.handle_play_pause(message['is_playing'])
+                self.is_playing = message['is_playing']
+                self.send_osc_message("")
 
             elif message['type'] == 'lyric_update':
                 self.handle_lyric_update(message['lyric'])
@@ -65,27 +67,28 @@ class ChatboxManager(BaseOSCManager):
         self.last_sent = ""
         self.last_update_time = time.time()
         self.refresh_timeout = 10
+        self.is_playing = None
+
+    def send_osc_message(self, lyric=None):
+        emoji = self.PLAY_EMOJI if self.is_playing else self.PAUSE_EMOJI
+        song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
+
+        if lyric is not None and self.is_playing:
+            if lyric != "" and lyric != "♪":
+                song_display += f" \n {self.MIC_EMOJI} {lyric}"
+                self.last_sent = song_display
+        elif self.is_playing and self.last_lyric:
+            song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
+
+        self.client.send_message(self.osc_path, song_display)
+        self.last_update_time = time.time()
 
     def handle_song_update(self):
         self.last_lyric = None
-        self.handle_play_pause(self.track.is_playing)
-
-    def handle_play_pause(self, is_playing):
-        emoji = self.PLAY_EMOJI if is_playing else self.PAUSE_EMOJI
-        song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
-
-        if is_playing and self.last_lyric:
-            song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
-
-        self.send_osc_message(song_display)
+        self.send_osc_message()
 
     def handle_lyric_update(self, lyric):
-        song_display = f"{self.PLAY_EMOJI} {self.track.name} - {self.track.artists[0]['name']}"
-
-        if lyric != "" and lyric != "♪":
-            song_display += f" \n {self.MIC_EMOJI} {lyric}"
-
-        self.send_osc_message(song_display)
+        self.send_osc_message(lyric=lyric)
         self.last_lyric = lyric
 
     def update(self):
@@ -94,7 +97,6 @@ class ChatboxManager(BaseOSCManager):
 
         if time.time() - self.last_update_time >= self.refresh_timeout:
             self.send_osc_message(self.last_sent)
-            self.last_update_time = time.time()
 
 
 class ParamManager(BaseOSCManager):
