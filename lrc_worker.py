@@ -169,7 +169,7 @@ def connect_to_lrc_lib(client_id):
 def connect_to_spotify(sp_dc):
     try:
         return syrics.api.Spotify(sp_dc)
-    except syrics.exceptions.NotValidSp_Dc as e:
+    except (syrics.exceptions.NotValidSp_Dc, syrics.exceptions.NoSongPlaying) as e:
         print(e)
         return None
 

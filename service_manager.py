@@ -3,8 +3,7 @@ import asyncio
 import queue
 
 from lrc_worker import lrc_loop
-from chatbox_manager import ChatboxManager
-from param_manager import ParamManager
+from osc_manager import ChatboxManager, ParamManager
 
 
 class ServiceManager:
