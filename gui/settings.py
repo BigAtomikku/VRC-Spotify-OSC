@@ -76,10 +76,9 @@ class SettingsPanel:
             config.set('ip', ip_field.value)
             config.set('port', int(port_field.value))
             config.set('provider', lyric_provider_dropdown.value)
-            if lyric_provider_dropdown.value == "Spotify":
-                config.set('sp_dc', sp_dc_field.value)
-            else:
-                config.set('client_id', client_id_field.value)
+            match lyric_provider_dropdown.value:
+                case 'Spotify': config.set('sp_dc', sp_dc_field.value)
+                case 'LRCLibAPI': config.set('client_id', client_id_field.value)
             app.service.stop()
             app.start_service()
 
@@ -120,5 +119,4 @@ class SettingsPanel:
             width=page.width,
             bgcolor=bg_color,
             border_radius=ft.border_radius.only(bottom_left=20, bottom_right=20),
-            expand=True
         )
