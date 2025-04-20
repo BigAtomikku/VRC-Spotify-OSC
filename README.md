@@ -1,4 +1,4 @@
-# VRC Spotify OSC
+# VRC Lyrics
 
 Display your current Spotify track and synchronized lyrics in the VRChat Chatbox.
 
@@ -19,7 +19,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 ## Installation
 
-1. **Download the latest release:** [VRC-Spotify-OSC.zip](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/latest)
+1. **Download the latest release:** [VRC-Lyrics.zip](https://github.com/BigAtomikku/VRC-LyricsC/releases/latest)
 
 2. **Run the program**
 
