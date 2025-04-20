@@ -38,7 +38,7 @@ class BaseOSCManager:
 
             elif message_type == 'is_playing':
                 self.is_playing = message['is_playing']
-                self.send_osc_message("")
+                self.send_osc_message()
 
             elif message['type'] == 'lyric_update':
                 self.handle_lyric_update(message['lyric'])
@@ -64,7 +64,6 @@ class ChatboxManager(BaseOSCManager):
 
     def __init__(self, ip, port, song_data_queue, running):
         super().__init__(ip, port, song_data_queue, running, self.OSC_CHATBOX_PATH)
-        self.last_sent = ""
         self.last_update_time = time.time()
         self.refresh_timeout = 10
         self.is_playing = None
@@ -73,13 +72,14 @@ class ChatboxManager(BaseOSCManager):
         emoji = self.PLAY_EMOJI if self.is_playing else self.PAUSE_EMOJI
         song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
 
-        if lyric is not None and self.is_playing:
-            if lyric != "" and lyric != "♪":
-                song_display += f" \n {self.MIC_EMOJI} {lyric}"
-                self.last_sent = song_display
-        elif self.is_playing and self.last_lyric:
-            song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
+        if self.is_playing:
+            if lyric is not None:
+                if lyric != "" and lyric != "♪":
+                    song_display += f" \n {self.MIC_EMOJI} {lyric}"
+            elif self.last_lyric:
+                song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
 
+        print(f"Sending: {song_display}")
         self.client.send_message(self.osc_path, song_display)
         self.last_update_time = time.time()
 
@@ -96,7 +96,7 @@ class ChatboxManager(BaseOSCManager):
             return
 
         if time.time() - self.last_update_time >= self.refresh_timeout:
-            self.send_osc_message(self.last_sent)
+            self.send_osc_message()
 
 
 class ParamManager(BaseOSCManager):
@@ -108,9 +108,6 @@ class ParamManager(BaseOSCManager):
     def handle_song_update(self):
         self.send_osc_message("")
         self.last_lyric = None
-
-    def handle_play_pause(self, is_playing):
-        self.send_osc_message(self.last_lyric) if is_playing else self.send_osc_message("")
 
     def handle_lyric_update(self, lyric):
         if lyric == "♪":

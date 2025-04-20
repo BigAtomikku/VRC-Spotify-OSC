@@ -85,7 +85,7 @@ class SpotifyOSCApp:
                         icon=Icons.CLOSE,
                         icon_color=self.text_color,
                         tooltip="Close",
-                        on_click=lambda e: self.page.window.close()
+                        on_click=lambda e: self.close_app()
                     )
                 ],
                     alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -93,6 +93,10 @@ class SpotifyOSCApp:
             ),
             maximizable=False
         )
+
+    def close_app(self):
+        self.service.stop()
+        self.page.window.close()
 
     def toggle_settings(self):
         self.settings_visible = not self.settings_visible

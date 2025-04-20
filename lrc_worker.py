@@ -125,6 +125,7 @@ async def poll_playback(playback, song_data_queue, running):
                 if playback.is_instrumental() or not playback.get_lyrics():
                     playback.update_track_info(lyric="Lyrics for this track are not available")
 
+                print(playback.lyrics)
             if playing is None or playback.is_playing != playing:
                 song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
                 playing = playback.is_playing
@@ -137,13 +138,16 @@ async def poll_playback(playback, song_data_queue, running):
 async def lyric_update_loop(playback, song_data_queue, running):
     previous_position = 0
     previous_key = None
+    previous_track_id = None
+
+    def is_scrubbed_backwards():
+        return playback.progress_ms < previous_position - 1000 and playback.progress_ms < min(playback.lyrics.keys())
 
     while running.is_set():
         if playback.lyrics:
-            if playback.progress_ms < previous_position - 1000 and playback.progress_ms < min(playback.lyrics.keys()):
+            if playback.id == previous_track_id and is_scrubbed_backwards():
                 song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
 
-            previous_position = playback.progress_ms
             current_key = max((k for k in playback.lyrics.keys() if k <= playback.progress_ms), default=None)
 
             if current_key is not None and current_key != previous_key:
@@ -152,6 +156,9 @@ async def lyric_update_loop(playback, song_data_queue, running):
                     playback.update_track_info(lyric=lyric)
                     song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
                 previous_key = current_key
+
+            previous_position = playback.progress_ms
+            previous_track_id = playback.id
 
         await asyncio.sleep(0.1)
 
