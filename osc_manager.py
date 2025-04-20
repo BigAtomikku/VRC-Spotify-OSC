@@ -14,11 +14,11 @@ class BaseOSCManager:
 
     def send_osc_message(self, lyric=None):
         if lyric is not None:
-            self.client.send_message(self.osc_path, lyric)
+            self.client.send_message(self.osc_path, [lyric, True, False])
 
         else:
             self.client.send_message(self.osc_path, self.last_lyric) if self.is_playing \
-                else self.client.send_message(self.osc_path, "")
+                else self.client.send_message(self.osc_path, ["", True, False])
 
     def handle_song_update(self):
         raise NotImplementedError("Subclasses should implement this method")
@@ -52,7 +52,7 @@ class BaseOSCManager:
             self.update()
             time.sleep(0.1)
 
-        self.client.send_message(self.osc_path, "")
+        self.client.send_message(self.osc_path, ["", True, False])
         print(f"[{self.__class__.__name__}] Exiting cleanly")
 
 
@@ -79,7 +79,7 @@ class ChatboxManager(BaseOSCManager):
             elif self.last_lyric:
                 song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
 
-        self.client.send_message(self.osc_path, song_display)
+        self.client.send_message(self.osc_path, [song_display, True, False])
         self.last_update_time = time.time()
 
     def handle_song_update(self):
