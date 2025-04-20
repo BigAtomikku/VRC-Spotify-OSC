@@ -163,7 +163,7 @@ async def lyric_update_loop(playback, song_data_queue, running):
 
 
 def connect_to_lrc_lib(client_id):
-    lrclib_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
+    lrclib_api = LrcLibAPI(user_agent="VRC-Lyrics/2.5.0")
     redirect_uri = "http://127.0.0.1:5000/callback"
     scope = "user-read-playback-state"
 
