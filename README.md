@@ -11,10 +11,10 @@ Display your current Spotify track and synchronized lyrics in the VRChat Chatbox
   <img src="https://github.com/user-attachments/assets/9df95f7d-d96d-4a62-a776-fb9c79675789" width="49%" alt="Settings Screen" />
 </div>
 
-You can also connect to third-party applications like TTS Voice Wizard! (requires pre-release 1.6.8.5)
+You can also connect to third-party applications like TTS Voice Wizard! (requires pre-release 1.6.8.5 or above)
 
 <div align="center">
-   <img src="https://github.com/user-attachments/assets/c2654f28-4bfb-46c9-9596-42fb843a682b" width="50%" alt="TTSVoiceWizard Integration Example" />
+   <img src="https://github.com/user-attachments/assets/c2654f28-4bfb-46c9-9596-42fb843a682b" width="75%" alt="TTSVoiceWizard Integration Example" />
 </div>
 
 ## Installation
