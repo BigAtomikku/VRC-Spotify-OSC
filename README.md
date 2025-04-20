@@ -19,7 +19,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 ## Installation
 
-1. **Download the latest release:** [VRC-Lyrics.zip](https://github.com/BigAtomikku/VRC-Lyrics/releases/latest)
+1. **Download the [latest release](https://github.com/BigAtomikku/VRC-Lyrics/releases/latest)**
 
 2. **Run the program**
 
