@@ -125,7 +125,6 @@ async def poll_playback(playback, song_data_queue, running):
                 if playback.is_instrumental() or not playback.get_lyrics():
                     playback.update_track_info(lyric="Lyrics for this track are not available")
 
-                print(playback.lyrics)
             if playing is None or playback.is_playing != playing:
                 song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
                 playing = playback.is_playing
