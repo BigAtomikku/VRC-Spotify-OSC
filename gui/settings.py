@@ -70,7 +70,7 @@ class SettingsPanel:
                 sp_dc_field.visible = False
             page.update()
 
-        lyric_provider_dropdown.on_change = update_provider_fields
+        lyric_provider_dropdown.on_change = lambda e: update_provider_fields()
 
         def save_settings():
             config.set('ip', ip_field.value)
