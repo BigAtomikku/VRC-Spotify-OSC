@@ -19,7 +19,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 ## Installation
 
-1. **Download the latest release:** [VRC-Spotify-OSC.zip](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/latest/download/VRC-Spotify-OSC.zip)
+1. **Download the latest release:** [VRC-Spotify-OSC.zip](https://github.com/BigAtomikku/VRC-Spotify-OSC/releases/latest)
 
 2. **Run the program**
 
