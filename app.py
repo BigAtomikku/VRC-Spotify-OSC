@@ -24,7 +24,7 @@ class SpotifyOSCApp:
         self.start_service()
 
     def setup_window(self):
-        self.page.title = "VRC Spotify OSC"
+        self.page.title = "VRC Lyrics"
         self.page.window.width = 500
         self.page.window.height = 500
         self.page.window.bgcolor = Colors.TRANSPARENT
@@ -74,7 +74,7 @@ class SpotifyOSCApp:
                     ),
                     ft.Container(
                         content=ft.Text(
-                            "VRC SPOTIFY OSC",
+                            "VRC LYRICS",
                             size=22,
                             color=self.text_color,
                             weight=ft.FontWeight.BOLD,

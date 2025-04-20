@@ -99,7 +99,7 @@ class SettingsPanel:
 
                     ft.Divider(color=Colors.GREY_800),
 
-                    ft.Text("Lyrics Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
+                    ft.Text("Provider Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                     lyric_provider_dropdown,
                     client_id_field,
                     sp_dc_field,
@@ -110,7 +110,8 @@ class SettingsPanel:
                         "Save Settings",
                         icon=Icons.SAVE,
                         bgcolor=accent_color,
-                        color=Colors.BLACK,
+                        color=text_color,
+                        width=175,
                         on_click=lambda e: save_settings()
                     )
                 ],
