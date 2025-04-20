@@ -1,5 +1,4 @@
 import asyncio
-import requests
 import spotipy
 import syrics.api
 import syrics.exceptions
@@ -24,27 +23,23 @@ class Playback:
             self.lyrics_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
 
     def fetch_playback(self):
-        try:
-            data = None
-            match self.lyrics_provider:
-                case "Spotify":
-                    data = self.spotify.get_current_song()
-                case "LRCLibAPI":
-                    data = self.spotify.current_playback()
+        data = None
+        match self.lyrics_provider:
+            case "Spotify":
+                data = self.spotify.get_current_song()
+            case "LRCLibAPI":
+                data = self.spotify.current_playback()
 
-            if data and data['item']:
-                self.id = data['item']['id']
-                self.name = data['item']['name']
-                self.artists = data['item']['artists']
-                self.progress_ms = data['progress_ms']
-                self.duration_ms = data['item']['duration_ms']
-                self.is_playing = data['is_playing']
-                self.album_cover = data['item']['album']['images'][0]['url']
-                return True
-            return False
-        except requests.exceptions.ReadTimeout:
-            print("Request timed out")
-            return False
+        if data and data['item']:
+            self.id = data['item']['id']
+            self.name = data['item']['name']
+            self.artists = data['item']['artists']
+            self.progress_ms = data['progress_ms']
+            self.duration_ms = data['item']['duration_ms']
+            self.is_playing = data['is_playing']
+            self.album_cover = data['item']['album']['images'][0]['url']
+            return True
+        return False
 
     def has_changed_track(self, previous_id):
         return self.id != previous_id

@@ -24,8 +24,8 @@ class SpotifyOSCApp:
         self.start_service()
 
     def setup_window(self):
-        self.page.window.width = 550
-        self.page.window.height = 550
+        self.page.window.width = 500
+        self.page.window.height = 500
         self.page.window.bgcolor = Colors.TRANSPARENT
         self.page.bgcolor = Colors.TRANSPARENT
         self.page.window.frameless = True
@@ -40,6 +40,7 @@ class SpotifyOSCApp:
 
         # Main layout
         layout = ft.Container(
+            expand=True,
             content=ft.Column([
                 self.build_title_bar(),
                 self.content_container,
@@ -68,7 +69,7 @@ class SpotifyOSCApp:
                         icon=Icons.SETTINGS,
                         icon_color=self.text_color,
                         tooltip="Settings",
-                        on_click=self.toggle_settings
+                        on_click=lambda e: self.toggle_settings()
                     ),
                     ft.Container(
                         content=ft.Text(
@@ -78,7 +79,6 @@ class SpotifyOSCApp:
                             weight=ft.FontWeight.BOLD,
                             text_align=ft.TextAlign.CENTER
                         ),
-                        expand=True,
                         alignment=ft.alignment.center
                     ),
                     ft.IconButton(
@@ -94,7 +94,7 @@ class SpotifyOSCApp:
             maximizable=False
         )
 
-    def toggle_settings(self, e):
+    def toggle_settings(self):
         self.settings_visible = not self.settings_visible
         self.settings_container.visible = self.settings_visible
         self.content_container.visible = not self.settings_visible
