@@ -2,11 +2,20 @@
 
 Display your current Spotify track and synchronized lyrics in the VRChat Chatbox.
 
-![VRChat display of song information](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/d1a2b873-9154-4a92-8755-1746c58a23c6)
+<div align="center">
+   <img src="https://github.com/user-attachments/assets/9a447777-6ce6-45d2-9f3e-155aea97476d" width="33%" alt="Home Screen" />
+</div>
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/17ac8748-bbcf-4604-afea-91c9d8d24aa3" width="49%" alt="Home Screen" />
+  <img src="https://github.com/user-attachments/assets/9df95f7d-d96d-4a62-a776-fb9c79675789" width="49%" alt="Settings Screen" />
+</div>
 
 You can also connect to third-party applications like TTS Voice Wizard! (requires pre-release 1.6.8.5)
 
-![TTS Voice Wizard integration](https://github.com/BigAtomikku/VRC-Spotify-OSC/assets/51969732/1cbd8c0f-fb3a-4698-aa34-6f6cd32d96e7)
+<div align="center">
+   <img src="https://github.com/user-attachments/assets/c2654f28-4bfb-46c9-9596-42fb843a682b" width="50%" alt="TTSVoiceWizard Integration Example" />
+</div>
 
 ## Installation
 
