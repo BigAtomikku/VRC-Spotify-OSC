@@ -61,7 +61,7 @@ class SettingsPanel:
             visible=config.get('lyric_provider', 'Spotify') == 'Spotify'
         )
 
-        def update_provider_fields(e):
+        def update_provider_fields():
             if lyric_provider_dropdown.value == "Spotify":
                 client_id_field.visible = False
                 sp_dc_field.visible = True
@@ -72,7 +72,7 @@ class SettingsPanel:
 
         lyric_provider_dropdown.on_change = update_provider_fields
 
-        def save_settings(e):
+        def save_settings():
             config.set('ip', ip_field.value)
             config.set('port', port_field.value)
             config.set('provider', lyric_provider_dropdown.value)
@@ -87,9 +87,6 @@ class SettingsPanel:
         return ft.Container(
             content=ft.Column(
                 [
-                    ft.Text("Settings", size=20, weight=ft.FontWeight.BOLD, color=text_color),
-                    ft.Divider(color=Colors.GREY_800),
-
                     ft.Text("OSC Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                     ft.Row(
                         [
@@ -99,24 +96,25 @@ class SettingsPanel:
                         alignment=ft.MainAxisAlignment.SPACE_BETWEEN
                     ),
 
+                    ft.Divider(color=Colors.GREY_800),
+
                     ft.Text("Lyrics Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                     lyric_provider_dropdown,
-                    ft.Container(height=5),
                     client_id_field,
                     sp_dc_field,
 
-                    ft.Container(height=20),
+                    ft.Container(height=10),
 
                     ft.ElevatedButton(
                         "Save Settings",
                         icon=Icons.SAVE,
                         bgcolor=accent_color,
                         color=Colors.BLACK,
-                        on_click=save_settings
+                        on_click=lambda e: save_settings()
                     )
                 ],
                 horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=5,
+                spacing=15,
             ),
             padding=20,
             width=page.width,
