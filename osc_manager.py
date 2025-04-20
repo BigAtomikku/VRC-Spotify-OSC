@@ -52,7 +52,7 @@ class BaseOSCManager:
             self.update()
             time.sleep(0.1)
 
-        self.send_osc_message("")
+        self.client.send_message(self.osc_path, "")
         print(f"[{self.__class__.__name__}] Exiting cleanly")
 
 

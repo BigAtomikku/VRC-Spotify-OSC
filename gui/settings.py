@@ -49,7 +49,7 @@ class SettingsPanel:
             width=350,
             bgcolor=form_color,
             color=text_color,
-            visible=config.get('lyric_provider', 'Spotify') == 'LRCLibAPI'
+            visible=config.get('lyric_provider') == 'LRCLibAPI'
         )
 
         sp_dc_field = ft.TextField(
@@ -58,18 +58,20 @@ class SettingsPanel:
             width=350,
             bgcolor=form_color,
             color=text_color,
-            visible=config.get('lyric_provider', 'Spotify') == 'Spotify'
+            visible=config.get('lyric_provider') == 'Spotify'
         )
 
         def update_provider_fields():
-            if lyric_provider_dropdown.value == "Spotify":
-                client_id_field.visible = False
-                sp_dc_field.visible = True
-            else:
-                client_id_field.visible = True
-                sp_dc_field.visible = False
+            match lyric_provider_dropdown.value:
+                case 'Spotify':
+                    client_id_field.visible = False
+                    sp_dc_field.visible = True
+                case 'LRCLibAPI':
+                    client_id_field.visible = True
+                    sp_dc_field.visible = False
             page.update()
 
+        update_provider_fields()
         lyric_provider_dropdown.on_change = lambda e: update_provider_fields()
 
         def save_settings():

@@ -24,6 +24,7 @@ class SpotifyOSCApp:
         self.start_service()
 
     def setup_window(self):
+        self.page.title = "VRC Spotify OSC"
         self.page.window.width = 500
         self.page.window.height = 500
         self.page.window.bgcolor = Colors.TRANSPARENT
