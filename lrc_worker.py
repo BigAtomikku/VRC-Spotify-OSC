@@ -20,7 +20,7 @@ class Playback:
         self.lyrics_provider = None
 
         if self.lyrics_provider == "LRCLibAPI":
-            self.lyrics_api = LrcLibAPI(user_agent="VRC-Spotify-OSC/2.1.5")
+            self.lyrics_api = LrcLibAPI(user_agent="VRC-Lyrics")
 
     def fetch_playback(self):
         data = None
