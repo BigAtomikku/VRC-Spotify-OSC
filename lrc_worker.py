@@ -26,7 +26,11 @@ class Playback:
         data = None
         match self.lyrics_provider:
             case "Spotify":
-                data = self.spotify.get_current_song()
+                try:
+                    data = self.spotify.get_current_song()
+                except syrics.exceptions.NoSongPlaying:
+                    return False
+
             case "LRCLibAPI":
                 data = self.spotify.current_playback()
 
@@ -116,6 +120,7 @@ async def poll_playback(playback, song_data_queue, running):
             playback.update_track_info(progress=playback.progress_ms, duration=playback.duration_ms)
 
             if playback.has_changed_track(track_id):
+                playback.lyrics = None
                 playback.update_track_info(title=playback.name,
                                            artist=", ".join(artist['name'] for artist in playback.artists),
                                            album_art=playback.album_cover, lyric="")
