@@ -20,8 +20,10 @@ class BaseOSCManager:
             self.client.send_message(self.osc_path, self.last_lyric) if self.is_playing \
                 else self.client.send_message(self.osc_path, ["", True, False])
 
-    def handle_song_update(self):
-        raise NotImplementedError("Subclasses should implement this method")
+    def handle_song_update(self, playback):
+        self.last_lyric = None
+        self.track = playback
+        self.send_osc_message()
 
     def handle_lyric_update(self, lyric):
         raise NotImplementedError("Subclasses should implement this method")
@@ -33,8 +35,7 @@ class BaseOSCManager:
             print(f"Got message: {message}")
 
             if message_type == 'song_update':
-                self.track = message['playback']
-                self.handle_song_update()
+                self.handle_song_update(message['playback'])
 
             elif message_type == 'is_playing':
                 self.is_playing = message['is_playing']
@@ -82,10 +83,6 @@ class ChatboxManager(BaseOSCManager):
         self.client.send_message(self.osc_path, [song_display, True, False])
         self.last_update_time = time.time()
 
-    def handle_song_update(self):
-        self.last_lyric = None
-        self.send_osc_message()
-
     def handle_lyric_update(self, lyric):
         self.send_osc_message(lyric=lyric)
         self.last_lyric = lyric
@@ -103,10 +100,6 @@ class ParamManager(BaseOSCManager):
 
     def __init__(self, ip, port, song_data_queue, running):
         super().__init__(ip, port, song_data_queue, running, self.OSC_LYRICS_PATH)
-
-    def handle_song_update(self):
-        self.send_osc_message("")
-        self.last_lyric = None
 
     def handle_lyric_update(self, lyric):
         if lyric == "♪":
