@@ -28,7 +28,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
    - Set IP address (default: 127.0.0.1)
    - Configure Port:
      - 9000 for VRChat Chatbox (default)
-     - 4026 for TTS Voice Wizard integration
+     - 4026 for TTS Voice Wizard integration (requires [v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or above)
 
 4. **Set Up Spotify Connection**
 
