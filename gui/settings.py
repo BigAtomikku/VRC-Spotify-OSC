@@ -49,7 +49,11 @@ class SettingsPanel:
             width=350,
             bgcolor=form_color,
             color=text_color,
-            visible=config.get('lyric_provider') == 'LRCLibAPI'
+        )
+
+        client_id_container = ft.Container(
+            content=client_id_field,
+            visible=config.get('provider') == 'LRCLibAPI'
         )
 
         sp_dc_field = ft.TextField(
@@ -58,17 +62,21 @@ class SettingsPanel:
             width=350,
             bgcolor=form_color,
             color=text_color,
-            visible=config.get('lyric_provider') == 'Spotify'
+        )
+
+        sp_dc_container = ft.Container(
+            content=sp_dc_field,
+            visible=config.get('provider') == 'Spotify'
         )
 
         def update_provider_fields():
             match lyric_provider_dropdown.value:
                 case 'Spotify':
-                    client_id_field.visible = False
-                    sp_dc_field.visible = True
+                    client_id_container.visible = False
+                    sp_dc_container.visible = True
                 case 'LRCLibAPI':
-                    client_id_field.visible = True
-                    sp_dc_field.visible = False
+                    client_id_container.visible = True
+                    sp_dc_container.visible = False
             page.update()
 
         update_provider_fields()
@@ -84,30 +92,31 @@ class SettingsPanel:
             app.service.stop()
             app.start_service()
 
-        # Settings panel
         return ft.Container(
+            padding=20,
+            width=page.width,
+            bgcolor=bg_color,
             content=ft.Column(
-                [
-                    ft.Text("OSC Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=15,
+                controls=[
+                    ft.Text(value="OSC Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                     ft.Row(
-                        [
-                            ip_field,
-                            port_field,
-                        ],
-                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+                        alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
+                        controls=[ip_field, port_field],
                     ),
 
                     ft.Divider(color=Colors.GREY_800),
 
-                    ft.Text("Provider Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
+                    ft.Text(value="Provider Settings", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                     lyric_provider_dropdown,
-                    client_id_field,
-                    sp_dc_field,
+                    client_id_container,
+                    sp_dc_container,
 
                     ft.Container(height=10),
 
                     ft.ElevatedButton(
-                        "Save Settings",
+                        text="Save Settings",
                         icon=Icons.SAVE,
                         bgcolor=accent_color,
                         color=text_color,
@@ -115,11 +124,5 @@ class SettingsPanel:
                         on_click=lambda e: save_settings()
                     )
                 ],
-                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
-                spacing=15,
             ),
-            padding=20,
-            width=page.width,
-            bgcolor=bg_color,
-            border_radius=ft.border_radius.only(bottom_left=20, bottom_right=20),
         )

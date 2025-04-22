@@ -12,7 +12,6 @@ class SpotifyOSCApp:
         self.bg_color = Colors.GREY_900
         self.accent_color = Colors.GREEN_500
         self.text_color = Colors.WHITE
-
         self.settings_container = None
         self.content_container = None
         self.page = page
@@ -39,14 +38,8 @@ class SpotifyOSCApp:
         self.settings_container = SettingsPanel(self).build()
         self.settings_container.visible = False
 
-        # Main layout
         layout = ft.Container(
             expand=True,
-            content=ft.Column([
-                self.build_title_bar(),
-                self.content_container,
-                self.settings_container
-            ], spacing=5),
             border_radius=20,
             bgcolor=self.bg_color,
             shadow=ft.BoxShadow(
@@ -54,46 +47,77 @@ class SpotifyOSCApp:
                 blur_radius=15,
                 color=ft.Colors.with_opacity(0.2, Colors.BLACK),
                 offset=ft.Offset(0, 2)
-            )
+            ),
+            content=ft.Column([
+                self.build_title_bar(),
+                self.content_container,
+                self.settings_container
+            ]),
         )
 
         self.page.add(layout)
 
     def build_title_bar(self):
         return ft.WindowDragArea(
-            ft.Container(
-                border_radius=ft.border_radius.only(top_left=20, top_right=20),
+            maximizable=False,
+            content=ft.Container(
                 bgcolor=Colors.BLACK45,
                 padding=10,
-                content=ft.Row([
-                    ft.IconButton(
-                        icon=Icons.SETTINGS,
-                        icon_color=self.text_color,
-                        tooltip="Settings",
-                        on_click=lambda e: self.toggle_settings()
-                    ),
-                    ft.Container(
-                        content=ft.Text(
-                            "VRC LYRICS",
-                            size=22,
-                            color=self.text_color,
-                            weight=ft.FontWeight.BOLD,
-                            text_align=ft.TextAlign.CENTER
+                content=ft.Row(
+                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
+                    controls=[
+                        ft.Container(
+                            expand=True,
+                            alignment=ft.alignment.center_left,
+                            content=ft.IconButton(
+                                icon=Icons.SETTINGS,
+                                icon_color=self.text_color,
+                                tooltip="Settings",
+                                on_click=lambda e: self.toggle_settings()
+                            )
                         ),
-                        alignment=ft.alignment.center
-                    ),
-                    ft.IconButton(
-                        icon=Icons.CLOSE,
-                        icon_color=self.text_color,
-                        tooltip="Close",
-                        on_click=lambda e: self.close_app()
-                    )
-                ],
-                    alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER),
-            ),
-            maximizable=False
+
+                        ft.Container(
+                            expand=True,
+                            alignment=ft.alignment.center,
+                            content=ft.Text(
+                                "VRC LYRICS",
+                                size=22,
+                                color=self.text_color,
+                                weight=ft.FontWeight.BOLD,
+                                text_align=ft.TextAlign.CENTER
+                            )
+                        ),
+
+                        ft.Container(
+                            expand=True,
+                            alignment=ft.alignment.center_right,
+                            content=ft.Row(
+                                alignment=ft.MainAxisAlignment.END,
+                                controls=[
+                                    ft.IconButton(
+                                        icon=Icons.REMOVE,
+                                        icon_color=self.text_color,
+                                        tooltip="Minimize",
+                                        on_click=lambda e: self.minimize_app()
+                                    ),
+                                    ft.IconButton(
+                                        icon=Icons.CLOSE,
+                                        icon_color=self.text_color,
+                                        tooltip="Close",
+                                        on_click=lambda e: self.close_app()
+                                    )
+                                ]
+                            )
+                        )
+                    ]
+                )
+            )
         )
+
+    def minimize_app(self):
+        self.page.window.minimized = True
+        self.page.update()
 
     def close_app(self):
         self.service.stop()
