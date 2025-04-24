@@ -2,5 +2,5 @@ python-osc~=1.9.3
 lrclibapi~=0.3.1
 spotipy~=2.25.1
 flet~=0.27.6
-syrics @ git+https://github.com/1053278842/syrics.git
 pyotp~=2.9.0
+requests~=2.32.3

@@ -1,8 +1,8 @@
 import flet as ft
+from gui import ContentPanel
+from gui import SettingsPanel
 from flet import Colors, Icons
 from config import ConfigManager
-from gui.content import ContentPanel
-from gui.settings import SettingsPanel
 from service_manager import ServiceManager
 
 

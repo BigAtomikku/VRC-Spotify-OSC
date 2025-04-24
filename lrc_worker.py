@@ -1,8 +1,7 @@
 import asyncio
 import spotipy
-import syrics.api
-import syrics.exceptions
 from lrclib import LrcLibAPI
+from providers import Spotify, InvalidSpDcCookie
 
 
 class Playback:
@@ -23,16 +22,7 @@ class Playback:
             self.lyrics_api = LrcLibAPI(user_agent="VRC-Lyrics")
 
     def fetch_playback(self):
-        data = None
-        match self.lyrics_provider:
-            case "Spotify":
-                try:
-                    data = self.spotify.get_current_song()
-                except syrics.exceptions.NoSongPlaying:
-                    return False
-
-            case "LRCLibAPI":
-                data = self.spotify.current_playback()
+        data = self.spotify.current_playback()
 
         if data and data['item']:
             self.id = data['item']['id']
@@ -54,7 +44,7 @@ class Playback:
     def get_lyrics(self):
         match self.lyrics_provider:
             case "Spotify":
-                return self.get_lyrics_syrics()
+                return self.get_lyrics_spotify()
             case "LRCLibAPI":
                 return self.get_lyrics_lrclib()
 
@@ -78,11 +68,10 @@ class Playback:
 
         return False
 
-    def get_lyrics_syrics(self):
-        track = self.spotify.get_current_song()['item']['id']
-        lyrics_data = self.spotify.get_lyrics(track)
+    def get_lyrics_spotify(self):
+        lyrics_data = self.spotify.get_lyrics(self.id)
 
-        if not lyrics_data or 'lyrics' not in lyrics_data or 'lines' not in lyrics_data['lyrics']:
+        if not lyrics_data:
             return False
 
         lines = lyrics_data['lyrics']['lines']
@@ -177,33 +166,30 @@ def connect_to_lrc_lib(client_id):
     return lrclib_api, spotify
 
 
-def connect_to_spotify(sp_dc):
-    try:
-        return syrics.api.Spotify(sp_dc)
-    except (syrics.exceptions.NotValidSp_Dc, syrics.exceptions.NoSongPlaying) as e:
-        print(e)
-        return None
-
-
 async def lrc_loop(provider, key, song_data_queue, running, update_track_info):
     playback = Playback(update_track_info=update_track_info)
 
-    match provider:
-        case "Spotify":
-            print("Connecting to Spotify")
-            playback.spotify = connect_to_spotify(key)
-            playback.lyrics_provider = "Spotify"
+    try:
+        match provider:
+            case "Spotify":
+                print("Connecting to Spotify")
+                playback.spotify = Spotify(key)
+                playback.lyrics_provider = "Spotify"
 
-        case "LRCLibAPI":
-            print("Connecting to LRCLibAPI")
-            lrclib_api, spotify = connect_to_lrc_lib(key)
-            playback.spotify = spotify
-            playback.lyrics_api = lrclib_api
-            playback.lyrics_provider = "LRCLibAPI"
+            case "LRCLibAPI":
+                print("Connecting to LRCLibAPI")
+                lrclib_api, spotify = connect_to_lrc_lib(key)
+                playback.spotify = spotify
+                playback.lyrics_api = lrclib_api
+                playback.lyrics_provider = "LRCLibAPI"
 
-    await asyncio.gather(
-        poll_playback(playback, song_data_queue, running),
-        lyric_update_loop(playback, song_data_queue, running)
-    )
+        await asyncio.gather(
+            poll_playback(playback, song_data_queue, running),
+            lyric_update_loop(playback, song_data_queue, running)
+        )
+
+    except InvalidSpDcCookie as e:
+        print(f"[ERROR] Invalid sp_dc cookie: {e}")
+        return
 
     print("[LRC Loop] Exiting cleanly")
