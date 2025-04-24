@@ -50,7 +50,11 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 ## Known Issues
 
 - Fast-paced lyrics may time-out the VRChat chatbox. Check if you're timed out by opening the launch pad.
+- If an invalid client_id is input and saved, the program will hang and will need to be closed with task manager. This seems to be an [issue with spotipy](https://github.com/spotipy-dev/spotipy/issues/957)
 
-## Support
+## License
 
-If you encounter any issues or have questions, please open an issue on GitHub.
+This project is licensed under the MIT License.
+
+> Note: Versions prior to 2.0.0 included GPLv3-licensed code. As of 2.0.0, all such dependencies have been removed.
+
