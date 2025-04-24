@@ -163,6 +163,7 @@ def connect_to_lrc_lib(client_id):
 
     auth_manager = spotipy.SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
     spotify = spotipy.Spotify(auth_manager=auth_manager)
+
     return lrclib_api, spotify
 
 
@@ -190,6 +191,7 @@ async def lrc_loop(provider, key, song_data_queue, running, update_track_info):
 
     except InvalidSpDcCookie as e:
         print(f"[ERROR] Invalid sp_dc cookie: {e}")
+        playback.update_track_info(lyric="Invalid SP_DC cookie provided")
         return
 
     print("[LRC Loop] Exiting cleanly")
