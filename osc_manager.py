@@ -23,6 +23,7 @@ class BaseOSCManager:
     def handle_song_update(self, playback):
         self.last_lyric = None
         self.track = playback
+        self.is_playing = playback.is_playing
         self.send_osc_message()
 
     def handle_lyric_update(self, lyric):
