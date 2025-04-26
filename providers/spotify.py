@@ -50,27 +50,36 @@ class Spotify:
             "App-Platform": "WebPlayer"
         })
         self.totp = TOTP()
-        self.sp = spotipy.Spotify(auth=self._fetch_access_token())
+        self.token = None
+        self._fetch_access_token()
+        self.sp = spotipy.Spotify(auth=self.token)
 
     def _fetch_access_token(self):
         try:
-            server_time_response = self.session.get("https://open.spotify.com/server-time")
-            server_time = server_time_response.json()["serverTime"] * 1000
+            server_time = self.session.get("https://open.spotify.com/server-time").json()["serverTime"] * 1000
             totp = self.totp.generate(timestamp=int(server_time))
-            token_url = (f"https://open.spotify.com/get_access_token?reason=transport&productType=web_player&totp="
-                         f"{totp}&totpVer={self.totp.version}&ts={int(server_time)}")
 
-            response = self.session.get(token_url)
+            token_url = "https://open.spotify.com/get_access_token"
+            params = {
+                "reason": "transport",
+                "productType": "web_player",
+                "totp": totp,
+                "totpVer": self.totp.version,
+                "ts": int(server_time)
+            }
+
+            response = self.session.get(token_url, params=params)
             response.raise_for_status()
 
             token_data = response.json()
             token = token_data.get("accessToken")
 
             if not token.startswith("BQ"):
-                return self._fetch_access_token()
+                self._fetch_access_token()
+                return
 
             self.session.headers["Authorization"] = f"Bearer {token}"
-            return token
+            self.token = token
 
         except requests.RequestException as e:
             raise InvalidSpDcCookie(f"Failed to get access token {e}")

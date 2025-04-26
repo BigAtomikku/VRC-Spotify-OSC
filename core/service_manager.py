@@ -1,9 +1,7 @@
-import threading
-import asyncio
 import queue
-
-from lrc_worker import lrc_loop
-from osc_manager import ChatboxManager, ParamManager
+import asyncio
+import threading
+from core import lrc_loop, ChatboxManager, ParamManager
 
 
 class ServiceManager:
