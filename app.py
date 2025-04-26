@@ -33,6 +33,7 @@ class SpotifyOSCApp:
         self.page.window.center()
 
     def build_ui(self):
+        self.page.controls.clear()
         self.content_panel = ContentPanel(self)
         self.content_container = self.content_panel.build()
         self.settings_container = SettingsPanel(self).build()

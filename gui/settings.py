@@ -83,14 +83,16 @@ class SettingsPanel:
         lyric_provider_dropdown.on_change = lambda e: update_provider_fields()
 
         def save_settings():
-            config.set('ip', ip_field.value)
-            config.set('port', int(port_field.value))
+            config.set('ip', ip_field.value.strip())
+            config.set('port', int(str(port_field.value).strip()))
             config.set('provider', lyric_provider_dropdown.value)
             match lyric_provider_dropdown.value:
-                case 'Spotify': config.set('sp_dc', sp_dc_field.value)
-                case 'LRCLibAPI': config.set('client_id', client_id_field.value)
+                case 'Spotify': config.set('sp_dc', sp_dc_field.value.strip())
+                case 'LRCLibAPI': config.set('client_id', client_id_field.value.strip())
             app.service.stop()
             app.start_service()
+            app.build_ui()
+            app.page.update()
 
         return ft.Container(
             padding=20,

@@ -1,7 +1,7 @@
 import asyncio
 import spotipy
 from lrclib import LrcLibAPI
-from providers import Spotify, InvalidSpDcCookie
+from providers import Spotify
 
 
 class Playback:
@@ -190,9 +190,8 @@ async def lrc_loop(provider, key, song_data_queue, running, update_track_info):
             lyric_update_loop(playback, song_data_queue, running)
         )
 
-    except InvalidSpDcCookie as e:
+    except Exception as e:
         print(f"[ERROR] Invalid sp_dc cookie: {e}")
         playback.update_track_info(lyric="Invalid SP_DC cookie provided")
-        return
 
     print("[LRC Loop] Exiting cleanly")
