@@ -140,6 +140,7 @@ async def lyric_update_loop(playback, song_data_queue, running):
         if playback.lyrics:
             if playback.id == previous_track_id and is_scrubbed_backwards():
                 song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
+                playback.update_track_info(lyric="")
 
             current_key = max((k for k in playback.lyrics.keys() if k <= playback.progress_ms), default=None)
 
