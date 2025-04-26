@@ -2,8 +2,8 @@ import flet as ft
 from gui import ContentPanel
 from gui import SettingsPanel
 from flet import Colors, Icons
+from core import ServiceManager
 from config import ConfigManager
-from service_manager import ServiceManager
 
 
 class SpotifyOSCApp:
