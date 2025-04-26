@@ -8,13 +8,8 @@ import spotipy
 import requests
 
 
-class InvalidSpDcCookie(Exception):
-    pass
-
-
 class TOTP:
     def __init__(self) -> None:
-        # dumped directly from the object, after all decryptions
         self.secret = b"5507145853487499592248630329347"
         self.version = 5
         self.period = 30
@@ -29,13 +24,13 @@ class TOTP:
 
         offset = hmac_result[-1] & 0x0F
         binary = (
-            (hmac_result[offset] & 0x7F) << 24
-            | (hmac_result[offset + 1] & 0xFF) << 16
-            | (hmac_result[offset + 2] & 0xFF) << 8
-            | (hmac_result[offset + 3] & 0xFF)
+                (hmac_result[offset] & 0x7F) << 24
+                | (hmac_result[offset + 1] & 0xFF) << 16
+                | (hmac_result[offset + 2] & 0xFF) << 8
+                | (hmac_result[offset + 3] & 0xFF)
         )
 
-        return str(binary % (10**self.digits)).zfill(self.digits)
+        return str(binary % (10 ** self.digits)).zfill(self.digits)
 
 
 class Spotify:
@@ -52,37 +47,24 @@ class Spotify:
         self.totp = TOTP()
         self.token = None
         self._fetch_access_token()
-        self.sp = spotipy.Spotify(auth=self.token)
+        self.sp = spotipy.Spotify(self.token)
 
     def _fetch_access_token(self):
-        try:
-            server_time = self.session.get("https://open.spotify.com/server-time").json()["serverTime"] * 1000
-            totp = self.totp.generate(timestamp=int(server_time))
+        server_time_response = self.session.get("https://open.spotify.com/server-time")
+        server_time = server_time_response.json()["serverTime"] * 1000
+        totp = self.totp.generate(timestamp=server_time)
 
-            token_url = "https://open.spotify.com/get_access_token"
-            params = {
-                "reason": "transport",
-                "productType": "web_player",
-                "totp": totp,
-                "totpVer": self.totp.version,
-                "ts": int(server_time)
-            }
+        params = {
+            "reason": "transport",
+            "productType": "web-player",
+            "totp": totp,
+            "totpVer": str(self.totp.version),
+            "ts": str(server_time),
+        }
 
-            response = self.session.get(token_url, params=params)
-            response.raise_for_status()
-
-            token_data = response.json()
-            token = token_data.get("accessToken")
-
-            if not token.startswith("BQ"):
-                self._fetch_access_token()
-                return
-
-            self.session.headers["Authorization"] = f"Bearer {token}"
-            self.token = token
-
-        except requests.RequestException as e:
-            raise InvalidSpDcCookie(f"Failed to get access token {e}")
+        response = self.session.get("https://open.spotify.com/get_access_token", params=params)
+        self.token = response.json()['accessToken']
+        self.session.headers['Authorization'] = f"Bearer {self.token}"
 
     def current_playback(self):
         return self.sp.current_playback()

@@ -1,1 +1,1 @@
-from .spotify import Spotify, InvalidSpDcCookie
+from .spotify import Spotify
