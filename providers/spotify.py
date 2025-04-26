@@ -1,39 +1,41 @@
-import time
-import spotipy
+# TOTP class taken from votify by glomatico (https://github.com/glomatico/votify)
+# Licensed under MIT License
+
+import math
+import hmac
 import hashlib
+import spotipy
 import requests
-from pyotp import TOTP
 
 
 class InvalidSpDcCookie(Exception):
     pass
 
 
-def generate_totp():
-    raw_bytes = [12, 56, 76, 33, 88, 44, 88, 33, 78, 78, 11, 66, 22, 22, 55, 69, 54]
-    deobfuscated = [(val ^ (i % 33 + 9)) for i, val in enumerate(raw_bytes)]
+class TOTP:
+    def __init__(self) -> None:
+        # dumped directly from the object, after all decryptions
+        self.secret = b"5507145853487499592248630329347"
+        self.version = 5
+        self.period = 30
+        self.digits = 6
 
-    byte_str = bytes(''.join(map(str, deobfuscated)), 'utf-8')
-    hex_str = ''.join(format(b, '02x') for b in byte_str)
+    def generate(self, timestamp: int) -> str:
+        counter = math.floor(timestamp / 1000 / self.period)
+        counter_bytes = counter.to_bytes(8, byteorder="big")
 
-    charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
-    secret_bytes = bytes.fromhex(hex_str)
+        h = hmac.new(self.secret, counter_bytes, hashlib.sha1)
+        hmac_result = h.digest()
 
-    bits_collected = 0
-    current_byte = 0
-    secret = ""
+        offset = hmac_result[-1] & 0x0F
+        binary = (
+            (hmac_result[offset] & 0x7F) << 24
+            | (hmac_result[offset + 1] & 0xFF) << 16
+            | (hmac_result[offset + 2] & 0xFF) << 8
+            | (hmac_result[offset + 3] & 0xFF)
+        )
 
-    for byte in secret_bytes:
-        current_byte = (current_byte << 8) | byte
-        bits_collected += 8
-        while bits_collected >= 5:
-            bits_collected -= 5
-            secret += charset[(current_byte >> bits_collected) & 31]
-
-    if bits_collected > 0:
-        secret += charset[(current_byte << (5 - bits_collected)) & 31]
-
-    return TOTP(secret, digits=6, digest=hashlib.sha1, interval=30).now()
+        return str(binary % (10**self.digits)).zfill(self.digits)
 
 
 class Spotify:
@@ -47,14 +49,16 @@ class Spotify:
             "User-Agent": "Mozilla/5.0",
             "App-Platform": "WebPlayer"
         })
+        self.totp = TOTP()
         self.sp = spotipy.Spotify(auth=self._fetch_access_token())
 
     def _fetch_access_token(self):
         try:
-            totp = generate_totp()
-            timestamp = int(time.time())
+            server_time_response = self.session.get("https://open.spotify.com/server-time")
+            server_time = server_time_response.json()["serverTime"] * 1000
+            totp = self.totp.generate(timestamp=int(server_time))
             token_url = (f"https://open.spotify.com/get_access_token?reason=transport&productType=web_player&totp="
-                         f"{totp}&totpVer=5&ts={timestamp}")
+                         f"{totp}&totpVer={self.totp.version}&ts={int(server_time)}")
 
             response = self.session.get(token_url)
             response.raise_for_status()
