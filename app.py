@@ -4,6 +4,7 @@ from gui import SettingsPanel
 from flet import Colors, Icons
 from core import ServiceManager
 from config import ConfigManager
+from shared import UpdateHandlers
 
 
 class SpotifyOSCApp:
@@ -142,10 +143,9 @@ class SpotifyOSCApp:
         port = self.config.get('port')
 
         if key:
-            def update_track_info(title=None, artist=None, lyric=None, progress=None, duration=None, album_art=None):
-                self.content_panel.update_track_info(title, artist, lyric, progress, duration, album_art)
+            handlers = UpdateHandlers(self)
 
-            self.service.start(provider, key, ip, port, update_track_info)
+            self.service.start(provider, key, ip, port, handlers)
 
 
 def main():

@@ -124,23 +124,22 @@ class ContentPanel:
 
         return self.album_art_container
 
-    def update_track_info(self, title=None, artist=None, lyric=None, progress=None, duration=None, album_art=None):
-        if title is not None:
-            self.song_title.value = title
-        if artist is not None:
-            self.artist.value = artist
-        if lyric is not None:
-            self.lyrics_text.value = lyric
+    def update_track_info(self, title, artist, album_art=None):
+        self.song_title.value = title
+        self.artist.value = artist
 
-        if album_art is not None:
+        if album_art:
             self.album_art.src = album_art
             self.album_art.visible = True
             self.album_art_icon.visible = False
-        elif album_art == "":
+        else:
             self.album_art.visible = False
             self.album_art_icon.visible = True
 
-        if progress is not None and duration is not None:
+        self.app.page.update()
+
+    def update_progress(self, progress, duration):
+        if progress is not None and duration:
             progress_seconds = progress / 1000.0
             duration_seconds = duration / 1000.0
 
@@ -151,6 +150,10 @@ class ContentPanel:
                 self.time_info.controls[0].value = current_time
                 self.time_info.controls[1].value = total_time
 
+        self.app.page.update()
+
+    def update_lyric(self, lyric):
+        self.lyrics_text.value = lyric or ""
         self.app.page.update()
 
 
