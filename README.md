@@ -32,6 +32,8 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 4. **Set Up Spotify Connection**
 
+   > Note: Please use Option B for the time being as Spotify has changed it's API again and so Option A is currently broken
+
    **Option A: Using Spotify Provider**
    - Visit [Spotify's website](https://open.spotify.com)
    - [Find your sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value
@@ -45,7 +47,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
    - Copy the generated Client ID
    - Paste your Client ID into the settings
 
-5. **Click "Save Settings" to apply your configuration**
+6. **Click "Save Settings" to apply your configuration**
 
 ## Known Issues
 
