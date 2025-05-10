@@ -32,7 +32,7 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 4. **Set Up Spotify Connection**
 
-   > Note: Please use Option B for the time being as Spotify has changed it's API again and so Option A is currently broken
+   > ⚠️ Please use Option B for the time being as Spotify has changed it's API again and so Option A is currently broken
 
    **Option A: Using Spotify Provider**
    - Visit [Spotify's website](https://open.spotify.com)
