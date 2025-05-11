@@ -32,12 +32,14 @@ You can also connect to third-party applications like TTS Voice Wizard! (require
 
 4. **Set Up Spotify Connection**
 
-   > ⚠️ Please use Option B for the time being as Spotify has changed it's API again and so Option A is currently broken
+   > ⚠️ **Important Note:**  
+   > **Spotify has changed its API once again — Option A is currently broken.**  
+   > ✅ **Please use Option B (LRCLib Provider) instead.**
 
-   **Option A: Using Spotify Provider**
-   - Visit [Spotify's website](https://open.spotify.com)
-   - [Find your sp_dc cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc) value
-   - Copy and paste this value into the SP_DC field
+   **~~Option A: Using Spotify Provider (currently broken)~~**
+   - ~~Visit [Spotify's website](https://open.spotify.com)~~  
+   - ~~[Find your `sp_dc` cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)~~  
+   - ~~Paste the `sp_dc` value into the `SP_DC` field in your settings~~
 
    **Option B: Using LRCLib Provider**
    - Create a Spotify Developer App:
