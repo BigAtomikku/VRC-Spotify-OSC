@@ -5,7 +5,7 @@ CONFIG_PATH = "config.json"
 _default_config = {
     "ip": "127.0.0.1",
     "port": 9000,
-    "chatbox_format": "{status} {name} -  {artist}\n{mic} {lyrics}"
+    "chatbox_format": "{status} {name} - {artist}\n{mic} {lyrics}"
 }
 
 

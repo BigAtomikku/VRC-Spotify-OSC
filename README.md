@@ -68,7 +68,7 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
       - `{mic}` - Microphone emoji for added flair (only shows when lyrics are displayed)
       - `{lyrics}` - Current line of lyrics
     - All text is available and inserted according to your selected output format.
-    - Default: `{status} {name} -  {artist}\n{mic} {lyrics}`
+    - Default: `{status} {name} - {artist}\n{mic} {lyrics}`
   - `4026` → TTS Voice Wizard
     - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
     - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)
