@@ -8,6 +8,11 @@ import spotipy
 import requests
 
 
+class SpotifyAuthError(Exception):
+    """Raised when we fail to fetch or parse a Spotify access token."""
+    pass
+
+
 class TOTP:
     def __init__(self) -> None:
         self.secret = b"5507145853487499592248630329347"
@@ -63,11 +68,12 @@ class Spotify:
         }
 
         response = self.session.get("https://open.spotify.com/get_access_token", params=params)
+        token = response.json().get("accessToken")
+        if not token:
+            raise SpotifyAuthError(f"Invalid sp_dc cookie")
+
         self.token = response.json()['accessToken']
         self.session.headers['Authorization'] = f"Bearer {self.token}"
-
-    def current_playback(self):
-        return self.sp.current_playback()
 
     def get_lyrics(self, track_id):
         url = f"https://spclient.wg.spotify.com/color-lyrics/v2/track/{track_id}"

@@ -1,5 +1,7 @@
-from pythonosc.udp_client import SimpleUDPClient
 import time
+import config
+from pythonosc.udp_client import SimpleUDPClient
+from .messages import LyricUpdate, SongUpdate, IsPlayingUpdate
 
 
 class BaseOSCManager:
@@ -8,42 +10,50 @@ class BaseOSCManager:
         self.song_data_queue = song_data_queue
         self.running = running
         self.track = None
-        self.last_lyric = ""
+        self.last_lyric = None
         self.osc_path = osc_path
         self.is_playing = None
+        self.song_display = config.get("chatbox_format")
 
     def send_osc_message(self, lyric=None):
         if lyric is not None:
             self.client.send_message(self.osc_path, [lyric, True, False])
 
         else:
-            self.client.send_message(self.osc_path, self.last_lyric) if self.is_playing \
-                else self.client.send_message(self.osc_path, ["", True, False])
+            if self.is_playing:
+                self.client.send_message(self.osc_path, [self.last_lyric, True, False])
+            else:
+                self.client.send_message(self.osc_path, ["", True, False])
 
     def handle_song_update(self, playback):
         self.last_lyric = None
         self.track = playback
         self.is_playing = playback.is_playing
-        self.send_osc_message()
+        lyric = playback.current_lyric
+        self.last_lyric = lyric
+        self.send_osc_message(lyric=lyric)
 
     def handle_lyric_update(self, lyric):
-        raise NotImplementedError("Subclasses should implement this method")
+        if lyric == "♪":
+            self.send_osc_message(lyric="")
+            self.last_lyric = ""
+            return
+
+        self.send_osc_message(lyric=lyric)
+        self.last_lyric = lyric
 
     def process_queue_messages(self):
         while not self.song_data_queue.empty():
             message = self.song_data_queue.get_nowait()
-            message_type = message['type']
-            print(f"Got message: {message}")
+            print(message)
 
-            if message_type == 'song_update':
-                self.handle_song_update(message['playback'])
-
-            elif message_type == 'is_playing':
-                self.is_playing = message['is_playing']
+            if isinstance(message, SongUpdate):
+                self.handle_song_update(message.playback)
+            elif isinstance(message, IsPlayingUpdate):
+                self.is_playing = message.is_playing
                 self.send_osc_message()
-
-            elif message['type'] == 'lyric_update':
-                self.handle_lyric_update(message['lyric'])
+            elif isinstance(message, LyricUpdate):
+                self.handle_lyric_update(message.lyric)
 
     def update(self):
         raise NotImplementedError("Subclasses should implement this method")
@@ -55,7 +65,6 @@ class BaseOSCManager:
             time.sleep(0.1)
 
         self.client.send_message(self.osc_path, ["", True, False])
-        print(f"[{self.__class__.__name__}] Exiting cleanly")
 
 
 class ChatboxManager(BaseOSCManager):
@@ -71,22 +80,28 @@ class ChatboxManager(BaseOSCManager):
         self.is_playing = None
 
     def send_osc_message(self, lyric=None):
+        if not self.track:
+            return
+
         emoji = self.PLAY_EMOJI if self.is_playing else self.PAUSE_EMOJI
-        song_display = f"{emoji} {self.track.name} - {self.track.artists[0]['name']}"
+        name = f"{emoji} {self.track.name}"
+        artist = self.track.artists[0]["name"]
+        lyrics = ""
 
         if self.is_playing:
-            if lyric is not None:
-                if lyric != "" and lyric != "♪":
-                    song_display += f" \n {self.MIC_EMOJI} {lyric}"
-            elif self.last_lyric:
-                song_display += f" \n {self.MIC_EMOJI} {self.last_lyric}"
+            if lyric:
+                lyrics = f"{self.MIC_EMOJI} {lyric}"
+            elif lyric is None and self.last_lyric:
+                lyrics = f"{self.MIC_EMOJI} {self.last_lyric}"
 
-        self.client.send_message(self.osc_path, [song_display, True, False])
+        try:
+            message = self.song_display.format(name=name, artist=artist, lyrics=lyrics)
+        except KeyError as e:
+            print(f"[ChatboxManager] Invalid chatbox_format key: {e}")
+            message = f"{name} - {artist}\n{lyrics}"
+
+        self.client.send_message(self.osc_path, [message.strip(), True, False])
         self.last_update_time = time.time()
-
-    def handle_lyric_update(self, lyric):
-        self.send_osc_message(lyric=lyric)
-        self.last_lyric = lyric
 
     def update(self):
         if not self.track:
@@ -101,13 +116,6 @@ class ParamManager(BaseOSCManager):
 
     def __init__(self, ip, port, song_data_queue, running):
         super().__init__(ip, port, song_data_queue, running, self.OSC_LYRICS_PATH)
-
-    def handle_lyric_update(self, lyric):
-        if lyric == "♪":
-            self.send_osc_message("")
-        else:
-            self.send_osc_message(lyric)
-        self.last_lyric = lyric
 
     def update(self):
         pass

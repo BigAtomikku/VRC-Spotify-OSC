@@ -1,64 +1,117 @@
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/91024f40-60e3-4a60-80e5-3b2ec1b4d0e4" alt="Banner" />
+</p>
+
+<p align="center">
+   <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License" />
+   <img src="https://img.shields.io/github/downloads/BigAtomikku/VRC-Lyrics/total?style=for-the-badge&logo=github" alt="Repo Downloads" />
+   <img src="https://img.shields.io/github/v/release/BigAtomikku/VRC-Lyrics?style=for-the-badge&label=Latest&logo=github" alt="Latest Release">
+    <a href="https://ko-fi.com/bigatomikku"><img alt="Ko-Fi" src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white"></a>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6d673fc7-d85e-49de-997d-b101650360c7" width="45%" alt="Home Screen" />
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/e9ab95e4-802b-4b92-8e05-bebef4443307" width="37%" alt="Settings Screen" />
+</p>
+
 # VRC Lyrics
 
-Display your current Spotify track and synchronized lyrics in the VRChat Chatbox.
+**Display your currently playing song and synchronized lyrics in the VRChat chatbox.**  
+Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
 
-<div align="center">
-   <img src="https://github.com/user-attachments/assets/9a447777-6ce6-45d2-9f3e-155aea97476d" width="33%" alt="Home Screen" />
-</div>
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/ee597119-ca1c-4f62-9e4f-fb4bfba87b94" width="33%" alt="Chatbox Example" />
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/2cbb0a0b-2ff3-4ca1-8b1b-5bae44540fef" width="26%" alt="TTSVoiceWizard Example" />
+</p>
 
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/4b57ea6c-9d13-4ec3-a25a-e6f42ea83814" width="49%" alt="Home Screen" />
-  <img src="https://github.com/user-attachments/assets/1a229703-560b-4c47-a9a7-8c2c6673a0f0" width="49%" alt="Settings Screen" />
-</div>
+## Table of Contents
 
-You can also connect to third-party applications like TTS Voice Wizard! (requires pre-release 1.6.8.5 or above)
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [OSC](#osc)
+  - [Playback Providers](#playback-providers)
+  - [Lyric Providers](#lyric-providers)
+- [Usage](#usage)
+- [Known Issues](#known-issues)
+- [License](#license)
 
-<div align="center">
-   <img src="https://github.com/user-attachments/assets/c2654f28-4bfb-46c9-9596-42fb843a682b" width="75%" alt="TTSVoiceWizard Integration Example" />
-</div>
+## Features
+
+- 🎵 Shows current Spotify or Windows‐detected track
+- 📝 Synchronized lyrics display in VRChat Chatbox
+- 🔊 TTS Voice Wizard integration (pre-release v1.6.8.5+)
+- 🔌 Supports multiple lyric backends (Spotify, LRCLib)
 
 ## Installation
 
-1. **Download the [latest release](https://github.com/BigAtomikku/VRC-Lyrics/releases/latest)**
+1. **Download** the [latest release](https://github.com/BigAtomikku/VRC-Lyrics/releases/latest).
+2. **Extract** and **run** `VRC Lyrics.exe`.
+3. **Open** the Settings window (⚙️ icon) to begin configuring.
+4. **Close** the Settings window (⚙️ icon again) to refresh the app with your changes.
 
-2. **Run the program**
+## Configuration
 
-3. **Configure Settings**
-   - Open the settings menu
-   - Set IP address (default: 127.0.0.1)
-   - Configure Port:
-     - 9000 for VRChat Chatbox (default)
-     - 4026 for TTS Voice Wizard integration (requires [v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or above)
+### OSC
 
-4. **Set Up Spotify Connection**
+- **IP Address**:
+  - Default: `127.0.0.1`
+- **Port**:
+  - `9000` → VRChat Chatbox (default)  
+    - Sends formatted lyrics and track info to the VRChat chatbox.
+    - You can customize the output using the following placeholders:
+      - `{name}` - Track name
+      - `{artist}` - Main artist (may add `{artists}` in the future if requested)
+      - `{lyrics}` - Current line of lyrics
+    - All text is available and inserted according to your selected output format.
+    - Default: `{name} - {artist}\n{lyrics}`
+  - `4026` → TTS Voice Wizard
+    - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
+    - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)
 
-   > ⚠️ **Important Note:**  
-   > **Spotify has changed its API once again — Option A is currently broken.**  
-   > ✅ **Please use Option B (LRCLib Provider) instead.**
+### Playback Providers
 
-   **~~Option A: Using Spotify Provider (currently broken)~~**
-   - ~~Visit [Spotify's website](https://open.spotify.com)~~  
-   - ~~[Find your `sp_dc` cookie](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)~~  
-   - ~~Paste the `sp_dc` value into the `SP_DC` field in your settings~~
+#### **Windows**
+   - Uses the Windows Media Session API to detect any playing audio.
+   - Limitations:
+     - Only syncs from the beginning of a changed track.
+     - Scrubbing is not supported.
+#### **Spotify**
+   - Connects via Spotify Web API.
+   - **Requires** a Spotify Developer Application:
+     1. Visit the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+     2. Create a new app
+     3. Add `http://127.0.0.1:5000/callback` as a **Redirect URI**
+     4. Copy the **Client ID** into the corresponding field
+     5. Once the program starts (by clicking the **⚙️ icon** again to exit settings), approve Spotify request in browser
 
-   **Option B: Using LRCLib Provider**
-   - Create a Spotify Developer App:
-     - Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
-     - Create a new app
-     - Add `http://127.0.0.1:5000/callback` as a **Redirect URI** in app settings
-   - Copy the generated Client ID
-   - Paste your Client ID into the settings
+### Lyric Providers
 
-6. **Click "Save Settings" to apply your configuration**
+#### **Spotify**
+  - Fetches lyrics directly from Spotify’s internal endpoint.
+  - Only compatible with Spotify playback.
+  - **Requires** your `sp_dc` cookie (see [Syrics Wiki](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)).
+#### **LRCLib**
+  - Uses the LRCLib open database for lyrics.
+
+## Usage
+
+1. Make sure VRChat (or TTS Voice Wizard) is running.
+2. Launch `VRC Lyrics.exe`.
+3. If needed, update settings by clicking the **⚙️ icon**, then click it again to refresh the app.
+4. Lyrics will automatically display in your VRChat chatbox while music plays.
 
 ## Known Issues
 
-- Fast-paced lyrics may time-out the VRChat chatbox. Check if you're timed out by opening the launch pad.
-- If an invalid client_id is input and saved, the program will hang and will need to be closed with task manager. This seems to be an [issue with spotipy](https://github.com/spotipy-dev/spotipy/issues/957)
+- **Fast‐paced lyrics** may time out the VRChat chatbox.
+  - Check for time-out by opening the VRChat launchpad.
+- **Invalid `client_id`** hangs the application (Spotipy bug).
+  - If it occurs, close via Task Manager.
+  - Tracked here: [spotipy#957](https://github.com/spotipy-dev/spotipy/issues/957).
 
 ## License
 
-This project is licensed under the MIT License.
-
-> Note: Versions prior to 2.0.0 included GPLv3-licensed code. As of 2.0.0, all such dependencies have been removed.
-
+This project is licensed under the [MIT License](LICENSE).
+> **Note:** Versions prior to **2.0.0** included GPLv3-licensed code; all dependencies are MIT as of **v2.0.0**.

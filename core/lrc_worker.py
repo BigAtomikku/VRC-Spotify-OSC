@@ -1,201 +1,96 @@
+import config
 import asyncio
-import spotipy
-from lrclib import LrcLibAPI
-from providers import Spotify
+from providers import SpotifyAuthError
+from lyrics import LRCLibLyrics, SpotifyLyrics
+from playback import SpotifyPlayback, WindowsPlayback
+from .messages import LyricUpdate, SongUpdate, IsPlayingUpdate
 
 
-class Playback:
-    def __init__(self, handlers):
-        self.spotify = None
-        self.id = None
-        self.name = None
-        self.artists = []
-        self.progress_ms = 0
-        self.duration_ms = 0
-        self.is_playing = False
-        self.album_cover = None
-        self.lyrics = None
-        self.update_track_info = handlers.track_info
-        self.update_progress = handlers.progress
-        self.update_lyric = handlers.lyric
-        self.lyrics_provider = None
-
-        if self.lyrics_provider == "LRCLibAPI":
-            self.lyrics_api = LrcLibAPI(user_agent="VRC-Lyrics")
-
-    def fetch_playback(self):
-        data = self.spotify.current_playback()
-
-        if data and data['item']:
-            self.id = data['item']['id']
-            self.name = data['item']['name']
-            self.artists = data['item']['artists']
-            self.progress_ms = data['progress_ms']
-            self.duration_ms = data['item']['duration_ms']
-            self.is_playing = data['is_playing']
-            images = data['item']['album']['images']
-            self.album_cover = images[0]['url'] if images else None
-            return True
-        return False
-
-    def has_changed_track(self, track_id, track_name, track_artists):
-        return (self.id, self.name, self.artists) != (track_id, track_name, track_artists)
-
-    def is_instrumental(self):
-        return "instrumental" in self.name.lower()
-
-    def get_lyrics(self):
-        match self.lyrics_provider:
-            case "Spotify":
-                return self.get_lyrics_spotify()
-            case "LRCLibAPI":
-                return self.get_lyrics_lrclib()
-
-    def get_lyrics_lrclib(self):
-        self.lyrics = None
-        track_duration = self.duration_ms / 1000
-        artists = self.artists
-        words = self.name.split()
-
-        for word_count in range(len(words), 0, -1):
-            track_name = ' '.join(words[:word_count])
-
-            for artist in artists:
-                print(f"Searching {track_name} by {artist['name']} with duration {track_duration}s via LRCLib")
-                results = self.lyrics_api.search_lyrics(track_name=track_name, artist_name=artist['name'])
-                filtered_results = [r for r in results if r.synced_lyrics and abs(r.duration - track_duration) <= 3]
-
-                if filtered_results:
-                    self.lrc_to_dictionary(filtered_results[0].synced_lyrics)
-                    return True
-
-        return False
-
-    def get_lyrics_spotify(self):
-        lyrics_data = self.spotify.get_lyrics(self.id)
-
-        if not lyrics_data:
-            return False
-
-        lines = lyrics_data['lyrics']['lines']
-        lyrics_dictionary = {
-            int(line['startTimeMs']): line['words']
-            for line in lines
-        }
-
-        self.lyrics = lyrics_dictionary
-        return True
-
-    def lrc_to_dictionary(self, lrc):
-        lines = lrc.strip().split('\n')
-        lrc_dict = {}
-
-        for line in lines:
-            timestamp, lyric = line.split(']', 1)
-            timestamp = timestamp[1:]
-            lyric = lyric.strip()
-
-            minutes, seconds = timestamp.split(':')
-            total_ms = int(minutes) * 60 * 1000 + float(seconds) * 1000
-
-            lrc_dict[int(total_ms)] = lyric
-
-        self.lyrics = lrc_dict
-
-
-async def poll_playback(playback, song_data_queue, running):
-    track_id, track_name, track_artists = "", "", ""
-    playing = None
-
-    while running.is_set():
-        if playback.fetch_playback():
-            playback.update_progress(progress=playback.progress_ms, duration=playback.duration_ms)
-
-            if playback.has_changed_track(track_id=track_id, track_name=track_name, track_artists=track_artists):
-                playback.lyrics = None
-                playback.update_track_info(title=playback.name,
-                                           artist=", ".join(artist['name'] for artist in playback.artists),
-                                           album_art=playback.album_cover)
-                playback.update_lyric(lyric="")
-                song_data_queue.put({'type': 'song_update', 'playback': playback})
-                track_id, track_name, track_artists = playback.id, playback.name, playback.artists
-
-                if playback.is_instrumental() or not playback.get_lyrics():
-                    playback.update_lyric(lyric="Lyrics for this track are not available")
-
-            if playing is None or playback.is_playing != playing:
-                song_data_queue.put({'type': 'is_playing', 'is_playing': playback.is_playing})
-                playing = playback.is_playing
-        else:
-            print("Failed to fetch playback info. Retrying...")
-
-        await asyncio.sleep(0.6)
-
-
-async def lyric_update_loop(playback, song_data_queue, running):
+async def poll_playback(playback, song_data_queue, running, handlers):
     previous_position = 0
     previous_key = None
-    previous_track_id = None
-
-    def is_scrubbed_backwards():
-        return playback.progress_ms < previous_position - 1000 and playback.progress_ms < min(playback.lyrics.keys())
 
     while running.is_set():
-        if playback.lyrics:
-            if playback.id == previous_track_id and is_scrubbed_backwards():
-                song_data_queue.put({'type': 'lyric_update', 'lyric': ""})
-                playback.update_lyric(lyric="")
+        previous_is_playing = playback.is_playing
+        fetch_success = await playback.fetch_playback()
+        if not fetch_success:
+            await asyncio.sleep(1)
+            continue
 
-            current_key = max((k for k in playback.lyrics.keys() if k <= playback.progress_ms), default=None)
+        handlers.progress(progress=playback.progress_ms, duration=playback.duration_ms)
 
-            if current_key is not None and current_key != previous_key:
-                lyric = playback.lyrics[current_key]
-                if lyric is not None:
-                    playback.update_lyric(lyric=lyric)
-                    song_data_queue.put({'type': 'lyric_update', 'lyric': lyric})
-                previous_key = current_key
-
+        if playback.has_changed_track():
+            handle_track_change(playback, song_data_queue, handlers)
             previous_position = playback.progress_ms
-            previous_track_id = playback.id
+            previous_key = playback.current_lyric_key
 
-        await asyncio.sleep(0.1)
+        else:
+            if playback.is_playing != previous_is_playing:
+                song_data_queue.put(IsPlayingUpdate(is_playing=playback.is_playing))
 
+            if playback.lyrics:
+                previous_key = update_lyrics(playback, previous_position, previous_key, song_data_queue, handlers)
+                previous_position = playback.progress_ms
 
-def connect_to_lrc_lib(client_id):
-    lrclib_api = LrcLibAPI(user_agent="VRC-Lyrics/2.5.0")
-    redirect_uri = "http://127.0.0.1:5000/callback"
-    scope = "user-read-playback-state"
-
-    auth_manager = spotipy.SpotifyPKCE(client_id=client_id, redirect_uri=redirect_uri, scope=scope)
-    spotify = spotipy.Spotify(auth_manager=auth_manager)
-
-    return lrclib_api, spotify
+        await asyncio.sleep(1)
 
 
-async def lrc_loop(provider, key, song_data_queue, running, handlers):
-    playback = Playback(handlers)
+def handle_track_change(playback, song_data_queue, handlers):
+    handlers.track_info(title=playback.name,
+                        artist=", ".join(artist['name'] for artist in playback.artists),
+                        album_art=getattr(playback, "album_cover", None))
+    handlers.lyric(lyric=playback.current_lyric)
+    song_data_queue.put(SongUpdate(playback=playback))
 
-    try:
-        match provider:
-            case "Spotify":
-                print("Connecting to Spotify")
-                playback.spotify = Spotify(key)
-                playback.lyrics_provider = "Spotify"
+    if playback.is_instrumental() or not playback.lyrics:
+        handlers.lyric(lyric="Lyrics for this track are not available")
 
-            case "LRCLibAPI":
-                print("Connecting to LRCLibAPI")
-                lrclib_api, spotify = connect_to_lrc_lib(key)
-                playback.spotify = spotify
-                playback.lyrics_api = lrclib_api
-                playback.lyrics_provider = "LRCLibAPI"
 
-        await asyncio.gather(
-            poll_playback(playback, song_data_queue, running),
-            lyric_update_loop(playback, song_data_queue, running)
-        )
+def update_lyrics(playback, previous_position, previous_key, song_data_queue, handlers):
+    current_key = playback.current_lyric_key
 
-    except Exception as e:
-        print(f"[LRC Loop] Error: {e}")
-        playback.update_track_info(lyric="Invalid config or program error")
+    if playback.progress_ms < previous_position - 1000 and current_key is None:
+        song_data_queue.put(LyricUpdate(lyric=""))
+        handlers.lyric(lyric="")
+        return None
 
-    print("[LRC Loop] Exiting cleanly")
+    if current_key is not None and current_key != previous_key:
+        lyric = playback.lyrics[current_key]
+        if lyric is not None:
+            handlers.lyric(lyric=lyric)
+            song_data_queue.put(LyricUpdate(lyric=lyric))
+        return current_key
+
+    return previous_key
+
+
+async def lrc(song_data_queue, running, handlers):
+    playback, lyrics = None, None
+    playback_provider = config.get('playback_provider')
+    lyric_provider = config.get('lyric_provider')
+
+    match lyric_provider:
+        case "Spotify":
+            try:
+                sp_dc = config.get('sp_dc')
+                lyrics = SpotifyLyrics(sp_dc=sp_dc)
+            except SpotifyAuthError:
+                handlers.error("Invalid sp_dc cookie")
+                running.clear()
+
+        case "LRCLib":
+            lyrics = LRCLibLyrics()
+
+    if not lyrics:
+        print("[LRC] Lyrics Provider failed to initialize")
+        return
+
+    match playback_provider:
+        case "Spotify":
+            client_id = config.get('client_id')
+            playback = SpotifyPlayback(client_id=client_id, lyrics=lyrics)
+        case "Windows":
+            playback = WindowsPlayback(lyrics=lyrics)
+
+    if playback:
+        await poll_playback(playback, song_data_queue, running, handlers)

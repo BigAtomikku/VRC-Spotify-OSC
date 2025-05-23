@@ -1,7 +1,8 @@
 config.json
 .cache
 .idea
-testing
+assets
+build
 compile.txt
 __pycache__
 gui/__pycache__/

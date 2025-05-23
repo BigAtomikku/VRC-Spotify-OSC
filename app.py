@@ -1,31 +1,28 @@
 import flet as ft
-from gui import ContentPanel
-from gui import SettingsPanel
-from flet import Colors, Icons
+from flet import Colors
 from core import ServiceManager
-from config import ConfigManager
-from shared import UpdateHandlers
+from gui import build_title_bar, Content, Settings, UpdateHandlers
 
 
 class SpotifyOSCApp:
     def __init__(self, page: ft.Page):
-        self.content_panel = None
+        self.content = None
+        self.settings = None
         self.bg_color = Colors.GREY_900
-        self.accent_color = Colors.GREEN_500
+        self.accent_color = Colors.WHITE
         self.text_color = Colors.WHITE
         self.settings_container = None
         self.content_container = None
         self.page = page
-        self.config = ConfigManager()
-        self.settings_visible = False
         self.setup_window()
+        self.handlers = UpdateHandlers(self)
         self.build_ui()
         self.service = ServiceManager()
-        self.start_service()
+        self.service.start(self.handlers)
 
     def setup_window(self):
         self.page.title = "VRC Lyrics"
-        self.page.window.width = 500
+        self.page.window.width = 450
         self.page.window.height = 500
         self.page.window.bgcolor = Colors.TRANSPARENT
         self.page.bgcolor = Colors.TRANSPARENT
@@ -35,10 +32,18 @@ class SpotifyOSCApp:
 
     def build_ui(self):
         self.page.controls.clear()
-        self.content_panel = ContentPanel(self)
-        self.content_container = self.content_panel.build()
-        self.settings_container = SettingsPanel(self).build()
+        self.page.snack_bar = ft.SnackBar(
+            content=ft.Text(None),
+            bgcolor=self.accent_color,
+            behavior=ft.SnackBarBehavior.FLOATING,
+            margin=ft.Margin(40, 0, 40, 365),
+        )
+        self.page.overlay.append(self.page.snack_bar)
+        self.settings = Settings(self.page, self.text_color, self.bg_color)
+        self.settings_container = self.settings.build()
         self.settings_container.visible = False
+        self.content = Content(self.page, self.text_color, self.bg_color, self.accent_color)
+        self.content_container = self.content.build()
 
         layout = ft.Container(
             expand=True,
@@ -50,72 +55,17 @@ class SpotifyOSCApp:
                 color=ft.Colors.with_opacity(0.2, Colors.BLACK),
                 offset=ft.Offset(0, 2)
             ),
-            content=ft.Column([
-                self.build_title_bar(),
-                self.content_container,
-                self.settings_container
+            content=ft.Column(spacing=0, controls=[
+                build_title_bar(self),
+                ft.Container(
+                    padding=23,
+                    expand=True,
+                    content=ft.Stack(expand=True, controls=[self.content_container, self.settings_container])
+                )
             ]),
         )
 
         self.page.add(layout)
-
-    def build_title_bar(self):
-        return ft.WindowDragArea(
-            maximizable=False,
-            content=ft.Container(
-                bgcolor=Colors.BLACK45,
-                padding=10,
-                content=ft.Row(
-                    vertical_alignment=ft.CrossAxisAlignment.CENTER,
-                    controls=[
-                        ft.Container(
-                            expand=True,
-                            alignment=ft.alignment.center_left,
-                            content=ft.IconButton(
-                                icon=Icons.SETTINGS,
-                                icon_color=self.text_color,
-                                tooltip="Settings",
-                                on_click=lambda e: self.toggle_settings()
-                            )
-                        ),
-
-                        ft.Container(
-                            expand=True,
-                            alignment=ft.alignment.center,
-                            content=ft.Text(
-                                "VRC LYRICS",
-                                size=22,
-                                color=self.text_color,
-                                weight=ft.FontWeight.BOLD,
-                                text_align=ft.TextAlign.CENTER
-                            )
-                        ),
-
-                        ft.Container(
-                            expand=True,
-                            alignment=ft.alignment.center_right,
-                            content=ft.Row(
-                                alignment=ft.MainAxisAlignment.END,
-                                controls=[
-                                    ft.IconButton(
-                                        icon=Icons.REMOVE,
-                                        icon_color=self.text_color,
-                                        tooltip="Minimize",
-                                        on_click=lambda e: self.minimize_app()
-                                    ),
-                                    ft.IconButton(
-                                        icon=Icons.CLOSE,
-                                        icon_color=self.text_color,
-                                        tooltip="Close",
-                                        on_click=lambda e: self.close_app()
-                                    )
-                                ]
-                            )
-                        )
-                    ]
-                )
-            )
-        )
 
     def minimize_app(self):
         self.page.window.minimized = True
@@ -126,26 +76,22 @@ class SpotifyOSCApp:
         self.page.window.close()
 
     def toggle_settings(self):
-        self.settings_visible = not self.settings_visible
-        self.settings_container.visible = self.settings_visible
-        self.content_container.visible = not self.settings_visible
-        self.page.update()
+        changed = 0
 
-    def start_service(self):
-        provider = self.config.get('provider')
+        if self.settings_container.visible:
+            changed, message = self.settings.save_settings()
+            if changed == 2:
+                self.handlers.error(message)
+                return
 
-        if provider == "Spotify":
-            key = self.config.get('sp_dc')
-        else:
-            key = self.config.get('client_id')
+        self.settings_container.visible = not self.settings_container.visible
+        self.settings_container.update()
+        self.content_container.visible = not self.content_container.visible
+        self.content_container.update()
 
-        ip = self.config.get('ip')
-        port = self.config.get('port')
-
-        if key:
-            handlers = UpdateHandlers(self)
-
-            self.service.start(provider, key, ip, port, handlers)
+        if changed == 1:
+            self.service.stop()
+            self.service.start(self.handlers)
 
 
 def main():

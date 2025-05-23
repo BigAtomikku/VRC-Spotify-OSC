@@ -1,1 +1,1 @@
-from .spotify import Spotify
+from .spotify import Spotify, SpotifyAuthError

@@ -1,7 +1,8 @@
 import queue
+import config
 import asyncio
 import threading
-from core import lrc_loop, ChatboxManager, ParamManager
+from core import lrc, ChatboxManager, ParamManager
 
 
 class ServiceManager:
@@ -12,30 +13,29 @@ class ServiceManager:
         self.queue = queue.Queue()
         self.lock = threading.Lock()
 
-    def start(self, provider, key, ip, port, handlers):
+    def start(self, handlers):
         with self.lock:
-            if not self.running.is_set():
-                self.running.set()
+            if self.running.is_set():
+                return
 
-                def run_lrc_loop():
-                    print("[ServiceManager] Starting LRC loop...")
-                    asyncio.run(lrc_loop(provider, key, self.queue, self.running, handlers))
+            print("[ServiceManager] Starting Services...")
+            self.running.set()
+            ip = config.get('ip')
+            port = config.get('port')
 
-                self.lrc_thread = threading.Thread(target=run_lrc_loop, daemon=True)
+            self.lrc_thread = threading.Thread(target=lambda: self._run_lrc(handlers), daemon=True)
+            osc = self._create_osc_manager(ip, port)
+            self.osc_thread = threading.Thread(target=osc.run, daemon=True)
 
-                if port == 9000:
-                    print("[ServiceManager] Starting Chatbox Manager...")
-                    osc = ChatboxManager(ip, port, self.queue, self.running)
-                else:
-                    print("[ServiceManager] Starting Param Manager...")
-                    osc = ParamManager(ip, port, self.queue, self.running)
-
-                self.osc_thread = threading.Thread(target=osc.run, daemon=True)
-                self.lrc_thread.start()
-                self.osc_thread.start()
+            self.lrc_thread.start()
+            self.osc_thread.start()
 
     def stop(self):
         with self.lock:
+            if not self.running.is_set():
+                return
+
+            print("[ServiceManager] Stopping Services...")
             self.running.clear()
 
             if self.lrc_thread and self.lrc_thread.is_alive():
@@ -51,3 +51,19 @@ class ServiceManager:
                     self.queue.get_nowait()
                 except queue.Empty:
                     break
+
+    def _run_lrc(self, handlers):
+        try:
+            asyncio.run(lrc(self.queue, self.running, handlers))
+        except Exception as e:
+            print(f"[ServiceManager] Fatal error in LRC: {e}")
+            handlers.error("Program error occurred. Please check your config or restart.")
+            self.running.clear()
+
+    def _create_osc_manager(self, ip, port):
+        if port == 9000:
+            print("[ServiceManager] Using ChatboxManager")
+            return ChatboxManager(ip, port, self.queue, self.running)
+        else:
+            print("[ServiceManager] Using ParamManager")
+            return ParamManager(ip, port, self.queue, self.running)
