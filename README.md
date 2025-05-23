@@ -62,11 +62,13 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
   - `9000` → VRChat Chatbox (default)  
     - Sends formatted lyrics and track info to the VRChat chatbox.
     - You can customize the output using the following placeholders:
+      - `{status}` - Current playback icon (▶️ for playing, ⏸️ for paused)
       - `{name}` - Track name
       - `{artist}` - Main artist (may add `{artists}` in the future if requested)
+      - `{mic}` - Microphone emoji for added flair (only shows when lyrics are displayed)
       - `{lyrics}` - Current line of lyrics
     - All text is available and inserted according to your selected output format.
-    - Default: `{name} - {artist}\n{lyrics}`
+    - Default: `{status} {name} -  {artist}\n{mic} {lyrics}`
   - `4026` → TTS Voice Wizard
     - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
     - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)

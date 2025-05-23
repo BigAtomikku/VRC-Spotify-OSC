@@ -83,22 +83,25 @@ class ChatboxManager(BaseOSCManager):
         if not self.track:
             return
 
-        emoji = self.PLAY_EMOJI if self.is_playing else self.PAUSE_EMOJI
-        name = f"{emoji} {self.track.name}"
+        status = self.PLAY_EMOJI if self.is_playing else self.PAUSE_EMOJI
+        name = self.track.name
         artist = self.track.artists[0]["name"]
+        mic = ""
         lyrics = ""
 
         if self.is_playing:
             if lyric:
-                lyrics = f"{self.MIC_EMOJI} {lyric}"
+                mic = self.MIC_EMOJI
+                lyrics = lyric
             elif lyric is None and self.last_lyric:
-                lyrics = f"{self.MIC_EMOJI} {self.last_lyric}"
+                mic = self.MIC_EMOJI
+                lyrics = self.last_lyric
 
         try:
-            message = self.song_display.format(name=name, artist=artist, lyrics=lyrics)
+            message = self.song_display.format(status=status, name=name, artist=artist, mic=mic, lyrics=lyrics)
         except KeyError as e:
             print(f"[ChatboxManager] Invalid chatbox_format key: {e}")
-            message = f"{name} - {artist}\n{lyrics}"
+            message = f"{status} {name} - {artist}\n{mic} {lyrics}"
 
         self.client.send_message(self.osc_path, [message.strip(), True, False])
         self.last_update_time = time.time()
