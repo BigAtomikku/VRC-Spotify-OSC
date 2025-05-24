@@ -3,10 +3,10 @@
 </p>
 
 <p align="center">
-   <img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License" />
-   <img src="https://img.shields.io/github/downloads/BigAtomikku/VRC-Lyrics/total?style=for-the-badge&logo=github" alt="Repo Downloads" />
-   <img src="https://img.shields.io/github/v/release/BigAtomikku/VRC-Lyrics?style=for-the-badge&label=Latest&logo=github" alt="Latest Release">
-    <a href="https://ko-fi.com/bigatomikku"><img alt="Ko-Fi" src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white"></a>
+   <a href="https://github.com/BigAtomikku/VRC-Lyrics/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
+   <a href="https://github.com/BigAtomikku/VRC-Lyrics/releases/latest"><img src="https://img.shields.io/github/downloads/BigAtomikku/VRC-Lyrics/total?style=for-the-badge&logo=github" alt="Repo Downloads"></a>
+   <a href="https://github.com/BigAtomikku/VRC-Lyrics/releases/latest"><img src="https://img.shields.io/github/v/release/BigAtomikku/VRC-Lyrics?style=for-the-badge&label=Latest&logo=github" alt="Latest Release"></a>
+   <a href="https://ko-fi.com/bigatomikku"><img alt="Ko-Fi" src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
 </p>
 
 <p align="center">
