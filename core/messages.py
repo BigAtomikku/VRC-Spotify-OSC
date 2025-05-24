@@ -1,5 +1,3 @@
-# core/messages.py
-
 from dataclasses import dataclass
 from playback.base import BasePlayback
 

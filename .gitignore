@@ -5,4 +5,5 @@ assets
 build
 compile.txt
 __pycache__
+setup.py
 gui/__pycache__/
