@@ -55,32 +55,31 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
 ## Configuration
 
 ### OSC
-
-- **IP Address**:
-  - Default: `127.0.0.1`
-- **Port**:
-  - `9000` → VRChat Chatbox (default)  
-    - Sends formatted lyrics and track info to the VRChat chatbox.
-    - You can customize the output using the following placeholders:
-      - `{status}` - Current playback icon (▶️ for playing, ⏸️ for paused)
-      - `{name}` - Track name
-      - `{artist}` - Main artist (may add `{artists}` in the future if requested)
-      - `{mic}` - Microphone emoji for added flair (only shows when lyrics are displayed)
-      - `{lyrics}` - Current line of lyrics
-    - All text is available and inserted according to your selected output format.
-    - Default: `{status} {name} - {artist}\n{mic} {lyrics}`
-  - `4026` → TTS Voice Wizard
-    - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
-    - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)
+#### IP Address:
+- Default: `127.0.0.1`
+#### Port:
+- `9000` → VRChat Chatbox (default)  
+- `4026` → TTS Voice Wizard
+  - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
+  - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)
+#### Chatbox Output Format (Port `9000` only)
+ - Sends formatted output to the VRChat chatbox.
+ - You can customize the output using the following placeholders:
+   - `{status}` - Current playback icon (▶️ for playing, ⏸️ for paused)
+   - `{name}` - Track name
+   - `{artist}` - Main artist (may add `{artists}` in the future if requested)
+   - `{mic}` - Microphone emoji for added flair (only shows when lyrics are displayed)
+   - `{lyrics}` - Current line of lyrics
+ - All text is available and inserted according to your selected output format.
+ - Default: `{status} {name} - {artist}\n{mic} {lyrics}`
 
 ### Playback Providers
-
-#### **Windows**
+#### Windows
    - Uses the Windows Media Session API to detect any playing audio.
    - Limitations:
      - Only syncs from the beginning of a changed track.
      - Scrubbing is not supported.
-#### **Spotify**
+#### Spotify
    - Connects via Spotify Web API.
    - **Requires** a Spotify Developer Application:
      1. Visit the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
@@ -90,12 +89,11 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
      5. Once the program starts (by clicking the **⚙️ icon** again to exit settings), approve Spotify request in browser
 
 ### Lyric Providers
-
-#### **Spotify**
+#### Spotify
   - Fetches lyrics directly from Spotify’s internal endpoint.
   - Only compatible with Spotify playback.
   - **Requires** your `sp_dc` cookie (see [Syrics Wiki](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)).
-#### **LRCLib**
+#### LRCLib
   - Uses the LRCLib open database for lyrics.
 
 ## Usage
