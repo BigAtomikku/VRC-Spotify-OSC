@@ -61,7 +61,7 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
 - `9000` → VRChat Chatbox (default)  
 - `4026` → TTS Voice Wizard
   - Requires [TTS Voice Wizard v1.6.8.5](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5) or later
-  - See [setup instructions](https://github.com/VRCWizard/TTS-Voice-Wizard/releases/v1.6.8.5)
+  - See [setup instructions](https://ttsvoicewizard.com/docs/MediaIntegration/VRCLyrics)
 #### Chatbox Output Format (Port `9000` only)
  - Sends formatted output to the VRChat chatbox.
  - You can customize the output using the following placeholders:
