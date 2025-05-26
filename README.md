@@ -107,9 +107,6 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
 
 - **Fast‐paced lyrics** may time out the VRChat chatbox.
   - Check for time-out by opening the VRChat launchpad.
-- **Invalid `client_id`** hangs the application (Spotipy bug).
-  - If it occurs, close via Task Manager.
-  - Tracked here: [spotipy#957](https://github.com/spotipy-dev/spotipy/issues/957).
 
 ## License
 
