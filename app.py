@@ -37,6 +37,7 @@ class SpotifyOSCApp:
             bgcolor=self.accent_color,
             behavior=ft.SnackBarBehavior.FLOATING,
             margin=ft.Margin(40, 0, 40, 365),
+            duration=5000
         )
         self.page.overlay.append(self.page.snack_bar)
         self.settings = Settings(self.page, self.text_color, self.bg_color)

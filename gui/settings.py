@@ -31,7 +31,7 @@ class Settings:
         self.ip_field = ft.TextField(
             label="IP",
             value=config.get('ip', '127.0.0.1'),
-            width=CONTAINER_WIDTH/2 - 5,
+            width=CONTAINER_WIDTH / 2 - 5,
             bgcolor=form_color,
             color=text_color,
             input_filter=ft.InputFilter(
@@ -43,13 +43,14 @@ class Settings:
         self.port_field = ft.TextField(
             label="Port",
             value=config.get('port', 9000),
-            width=CONTAINER_WIDTH/2 - 5,
+            width=CONTAINER_WIDTH / 2 - 5,
             bgcolor=form_color,
             color=text_color,
             input_filter=ft.InputFilter(
                 regex_string=r"^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$"
             ),
-            max_length=5
+            max_length=5,
+            on_change=lambda e: update_chatbox_field()
         )
 
         self.chatbox_format_field = ft.TextField(
@@ -72,19 +73,38 @@ class Settings:
             bgcolor=form_color,
             filled=True,
             fill_color=form_color,
-            color=text_color
+            color=text_color,
+            on_change=lambda e: (update_playback_fields(), update_lyric_fields())
         )
 
         self.lyric_provider_dropdown = ft.Dropdown(
             label="Lyric Provider",
             value=config.get('lyric_provider'),
-            options=[ft.dropdown.Option("LRCLib"), ft.dropdown.Option("Spotify")],
             width=CONTAINER_WIDTH,
             bgcolor=form_color,
             filled=True,
             fill_color=form_color,
-            color=text_color
+            color=text_color,
+            on_change=lambda e: update_lyric_fields()
         )
+
+        clear_icon = ft.Container(
+            margin=ft.Margin(left=245, top=4, bottom=0, right=0),
+            content=ft.IconButton(
+                icon=ft.icons.CLOSE,
+                icon_size=12,
+                style=ft.ButtonStyle(
+                    icon_color={
+                        ft.ControlState.DEFAULT: ft.Colors.WHITE70,
+                        ft.ControlState.HOVERED: ft.Colors.WHITE,
+                    },
+                    overlay_color="transparent",
+                ),
+                on_click=lambda e: clear_lyric_provider(),
+            )
+        )
+
+        lyric_provider_stack = ft.Stack(controls=[self.lyric_provider_dropdown, clear_icon])
 
         # ───── Shared Fields ─────
         self.client_id_field = ft.TextField(
@@ -106,6 +126,22 @@ class Settings:
         self.playback_fields_container = ft.Container(content=ft.Column(spacing=10), width=CONTAINER_WIDTH)
         self.lyric_fields_container = ft.Container(content=ft.Column(spacing=10), width=CONTAINER_WIDTH)
 
+        def clear_lyric_provider():
+            self.lyric_provider_dropdown = ft.Dropdown(
+                label="Lyric Provider",
+                width=CONTAINER_WIDTH,
+                bgcolor=form_color,
+                value="",
+                filled=True,
+                fill_color=form_color,
+                color=text_color,
+                on_change=lambda e: update_lyric_fields()
+            )
+
+            lyric_provider_stack.controls = [self.lyric_provider_dropdown, clear_icon]
+            update_playback_fields()
+            update_lyric_fields()
+
         def update_chatbox_field():
             port = int(self.port_field.value)
 
@@ -113,6 +149,7 @@ class Settings:
                 self.chatbox_format_container.content = self.chatbox_format_field
             else:
                 self.chatbox_format_container.content = None
+
             page.update()
 
         def update_playback_fields():
@@ -122,30 +159,32 @@ class Settings:
                     self.playback_fields_container.visible = True
                     self.playback_fields_container.content = ft.Column(controls=[self.client_id_field])
                     self.lyric_provider_dropdown.options = [ft.dropdown.Option("LRCLib"), ft.dropdown.Option("Spotify")]
-
                 case "Windows":
                     self.playback_fields_container.visible = False
                     self.lyric_provider_dropdown.options = [ft.dropdown.Option("LRCLib")]
-                    self.lyric_provider_dropdown.value = "LRCLib"
+                    if self.lyric_provider_dropdown.value == "Spotify":
+                        clear_lyric_provider()
 
             page.update()
 
         def update_lyric_fields():
             lp = self.lyric_provider_dropdown.value
+            print("Lyric provider selected:", lp)
             match lp:
                 case "Spotify":
-                    self.lyric_fields_container.visible = True
                     self.lyric_fields_container.content = ft.Column(controls=[ft.Container(content=self.sp_dc_field)])
-
+                    self.lyric_fields_container.visible = True
+                    clear_icon.visible = True
                 case "LRCLib":
                     self.lyric_fields_container.visible = False
+                    clear_icon.visible = True
+                case _:
+                    self.lyric_fields_container.visible = False
+                    clear_icon.visible = False
 
             page.update()
 
         # Initial updates
-        self.port_field.on_change = lambda e: update_chatbox_field()
-        self.playback_provider_dropdown.on_change = lambda e: (update_playback_fields(), update_lyric_fields())
-        self.lyric_provider_dropdown.on_change = lambda e: update_lyric_fields()
         update_playback_fields()
         update_lyric_fields()
         update_chatbox_field()
@@ -164,7 +203,7 @@ class Settings:
                     self.playback_provider_dropdown,
                     self.playback_fields_container,
                     ft.Text(value="Lyric Provider", size=16, weight=ft.FontWeight.BOLD, color=text_color),
-                    self.lyric_provider_dropdown,
+                    lyric_provider_stack,
                     self.lyric_fields_container,
                     ft.Text(value="", size=16, weight=ft.FontWeight.BOLD, color=text_color),
                 ],

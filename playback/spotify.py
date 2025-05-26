@@ -29,10 +29,11 @@ class SpotifyPlayback(BasePlayback):
         images = data['item']['album']['images']
         self.album_cover = images[0]['url'] if images else None
 
-        if (self.id, self.name, self.artists) != (self._last_id, self._last_name, self._last_artists):
-            self.lyrics = self.lyrics_provider.get_lyrics(self)
+        if self.lyrics_provider:
+            if (self.id, self.name, self.artists) != (self._last_id, self._last_name, self._last_artists):
+                self.lyrics = self.lyrics_provider.get_lyrics(self)
 
-        self._update_current_lyric()
+            self._update_current_lyric()
 
         return True
 

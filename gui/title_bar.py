@@ -16,9 +16,15 @@ def build_title_bar(app):
                         alignment=ft.alignment.center_left,
                         content=ft.IconButton(
                             icon=Icons.SETTINGS,
-                            icon_color=app.text_color,
+                            style=ft.ButtonStyle(
+                                icon_color={
+                                    ft.ControlState.DEFAULT: ft.Colors.WHITE70,
+                                    ft.ControlState.HOVERED: ft.Colors.WHITE,
+                                },
+                                overlay_color="transparent",
+                            ),
                             tooltip="Settings",
-                            on_click=lambda e: app.toggle_settings()
+                            on_click=lambda e: app.toggle_settings(),
                         )
                     ),
 
@@ -42,13 +48,25 @@ def build_title_bar(app):
                             controls=[
                                 ft.IconButton(
                                     icon=Icons.REMOVE,
-                                    icon_color=app.text_color,
+                                    style=ft.ButtonStyle(
+                                        icon_color={
+                                            ft.ControlState.DEFAULT: ft.Colors.WHITE70,
+                                            ft.ControlState.HOVERED: ft.Colors.WHITE,
+                                        },
+                                        overlay_color="transparent",
+                                    ),
                                     tooltip="Minimize",
                                     on_click=lambda e: app.minimize_app()
                                 ),
                                 ft.IconButton(
                                     icon=Icons.CLOSE,
-                                    icon_color=app.text_color,
+                                    style=ft.ButtonStyle(
+                                        icon_color={
+                                            ft.ControlState.DEFAULT: ft.Colors.WHITE70,
+                                            ft.ControlState.HOVERED: ft.Colors.WHITE,
+                                        },
+                                        overlay_color="transparent",
+                                    ),
                                     tooltip="Close",
                                     on_click=lambda e: app.close_app()
                                 )

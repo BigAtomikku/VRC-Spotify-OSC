@@ -57,7 +57,10 @@ class ServiceManager:
             asyncio.run(lrc(self.queue, self.running, handlers))
         except Exception as e:
             print(f"[ServiceManager] Fatal error in LRC: {e}")
-            handlers.error("Program error occurred. Please check your config or restart.")
+            if "Invalid client_id" in str(e):
+                handlers.error("Invalid Spotify Client ID. Please check your configuration.")
+            else:
+                handlers.error("Program error occurred. Please check your config or restart.")
             self.running.clear()
 
     def _create_osc_manager(self, ip, port):

@@ -42,6 +42,10 @@ def handle_track_change(playback, song_data_queue, handlers):
     handlers.lyric(lyric=playback.current_lyric)
     song_data_queue.put(SongUpdate(playback=playback))
 
+    if not playback.lyrics_provider:
+        handlers.lyric(lyric="No lyric provider selected in settings")
+        return
+
     if playback.is_instrumental() or not playback.lyrics:
         handlers.lyric(lyric="Lyrics for this track are not available")
 
@@ -76,14 +80,9 @@ async def lrc(song_data_queue, running, handlers):
                 lyrics = SpotifyLyrics(sp_dc=sp_dc)
             except SpotifyAuthError:
                 handlers.error("Invalid sp_dc cookie")
-                running.clear()
 
         case "LRCLib":
             lyrics = LRCLibLyrics()
-
-    if not lyrics:
-        print("[LRC] Lyrics Provider failed to initialize")
-        return
 
     match playback_provider:
         case "Spotify":

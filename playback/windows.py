@@ -25,11 +25,11 @@ class WindowsPlayback(BasePlayback):
         self.is_playing = playback_info.playback_status == 4
 
         current_time = time.monotonic()
-        is_new_track = (self.name, self.artists) != (self._last_name, self._last_artists)
 
-        if is_new_track:
-            self.lyrics = self.lyrics_provider.get_lyrics(self)
-            self.progress_ms = 800
+        if (self.name, self.artists) != (self._last_name, self._last_artists):
+            if self.lyrics_provider:
+                self.lyrics = self.lyrics_provider.get_lyrics(self)
+                self.progress_ms = 800
 
         elif self.is_playing and self._last_fetch_time is not None:
             self.progress_ms += (current_time - self._last_fetch_time) * 1000
