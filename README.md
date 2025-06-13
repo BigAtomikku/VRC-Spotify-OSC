@@ -90,7 +90,7 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
      5. Once the program starts (by clicking the **⚙️ icon** again to exit settings), approve Spotify request in browser
 
 ### Lyric Providers
-#### Spotify
+#### ~~Spotify~~ (⚠️ Currently broken by Spotify again ⚠️)
   - Fetches lyrics directly from Spotify’s internal endpoint.
   - Only compatible with Spotify playback.
   - **Requires** your `sp_dc` cookie (see [Syrics Wiki](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)).
