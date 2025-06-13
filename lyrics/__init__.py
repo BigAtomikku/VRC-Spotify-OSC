@@ -1,2 +1,2 @@
 from .lrclib import LRCLibLyrics
-from .spotify import SpotifyLyrics
+from .spotify import Spotify, SpotifyAuthError, SpotifyLyrics

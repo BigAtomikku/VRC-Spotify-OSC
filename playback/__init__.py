@@ -1,3 +1,3 @@
-from playback.base import BasePlayback
-from playback.spotify import SpotifyPlayback
-from playback.windows import WindowsPlayback
+from .base import BasePlayback
+from .spotify import SpotifyPlayback
+from .windows import WindowsPlayback

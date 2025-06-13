@@ -1,7 +1,6 @@
 import config
 import asyncio
-from providers import SpotifyAuthError
-from lyrics import LRCLibLyrics, SpotifyLyrics
+from lyrics import LRCLibLyrics, SpotifyLyrics, SpotifyAuthError
 from playback import SpotifyPlayback, WindowsPlayback
 from .messages import LyricUpdate, SongUpdate, IsPlayingUpdate
 
