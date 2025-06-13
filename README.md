@@ -6,7 +6,7 @@
    <a href="https://github.com/BigAtomikku/VRC-Lyrics/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License"></a>
    <a href="https://github.com/BigAtomikku/VRC-Lyrics/releases/latest"><img src="https://img.shields.io/github/downloads/BigAtomikku/VRC-Lyrics/total?style=for-the-badge&logo=github" alt="Repo Downloads"></a>
    <a href="https://github.com/BigAtomikku/VRC-Lyrics/releases/latest"><img src="https://img.shields.io/github/v/release/BigAtomikku/VRC-Lyrics?style=for-the-badge&label=Latest&logo=github" alt="Latest Release"></a>
-   <a href="https://www.virustotal.com/gui/file/6952009061a61b6983c21dfabf06d89222baa8437f50f282ae3c5c245ea56717?nocache=1"><img src="https://custom-icon-badges.herokuapp.com/badge/-Scan%20at%20VirusTotal-blue?style=for-the-badge&logo=virustotal&logoColor=white" alt="Virus Total Scan"></a>
+   <a href="https://www.virustotal.com/gui/file/5784b0822ac2e868c539c9d01155c142c80b88156545c70596048e393526c872?nocache=1"><img src="https://custom-icon-badges.herokuapp.com/badge/-Scan%20at%20VirusTotal-blue?style=for-the-badge&logo=virustotal&logoColor=white" alt="Virus Total Scan"></a>
    <a href="https://ko-fi.com/bigatomikku"><img alt="Ko-Fi" src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
 </p>
 
@@ -90,7 +90,7 @@ Integrates with TTS Voice Wizard! (requires pre-release v1.6.8.5+).
      5. Once the program starts (by clicking the **⚙️ icon** again to exit settings), approve Spotify request in browser
 
 ### Lyric Providers
-#### ~~Spotify~~ (⚠️ Currently broken by Spotify again ⚠️)
+#### Spotify
   - Fetches lyrics directly from Spotify’s internal endpoint.
   - Only compatible with Spotify playback.
   - **Requires** your `sp_dc` cookie (see [Syrics Wiki](https://github.com/akashrchandran/syrics/wiki/Finding-sp_dc)).
